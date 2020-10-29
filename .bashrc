@@ -108,7 +108,7 @@ PS2='\e[1A│ \e[1B\e[2D└▶ '
 set -o vi
 
 # colorized `ls'
-eval `dircolors ~/.dircolors`
+eval `dircolors ~/.config/dircolors/config`
 
 ################################################################################
 #                                   ALIASES                                    #
