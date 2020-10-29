@@ -1,0 +1,105 @@
+############################## colour definitions ##############################
+
+SOLARIZED_BACK='#121212'
+SOLARIZED_BASE03='#121212'
+SOLARIZED_BASE02='#1c1c1c'
+SOLARIZED_BASE01='#4e4e4e'
+SOLARIZED_BASE00='#585858'
+SOLARIZED_BASE0='#808080'
+SOLARIZED_BASE1='#8a8a8a'
+SOLARIZED_BASE2='#e4e4e4'
+SOLARIZED_BASE3='#ffffd7'
+SOLARIZED_YELLOW='#afaf00'
+SOLARIZED_ORANGE='#d75f00'
+SOLARIZED_RED='#af0000'
+SOLARIZED_MAGENTA='#af005f'
+SOLARIZED_VIOLET='#5f5faf'
+SOLARIZED_BLUE='#0087ff'
+SOLARIZED_CYAN='#00afaf'
+SOLARIZED_GREEN='#5faf00'
+
+################################### bindings ###################################
+
+# prefix key
+set -g prefix C-b
+
+# reload .tmux.conf
+bind R source-file ~/.config/tmux/config \; display "configuration reloaded"
+
+# keep PWD when creating new panes/windows
+bind c new-window -c "#{pane_current_path}"
+bind % split-window -h -c "#{pane_current_path}"
+bind '"' split-window -v -c "#{pane_current_path}"
+
+# join target pane into current window
+bind + command-prompt "join-pane -t :. -s '%%'"
+
+# activate mouse support
+bind m setw -g mouse on\;\
+       display "mouse-support → on"
+
+# deactivate mouse support
+bind M setw -g mouse off\;\
+       display "mouse-support → off"
+
+# enable scrolling with the mouse
+bind -T root WheelUpPane select-pane -t = \; copy-mode -t = \; send-keys -M
+bind -T root WheelDownPane select-pane -t = \; copy-mode -t = \; send-keys -M
+
+# vi break current pane into new window
+bind T break-pane
+
+# vi tree chooser
+bind E choose-tree
+
+# vi pane traversal
+bind h select-pane -L
+bind j select-pane -D
+bind k select-pane -U
+bind l select-pane -R
+
+#################################### server #################################### 
+
+set -g default-terminal    "tmux-256color"
+# 24 bit color support
+set -as terminal-overrides ",alacritty*:Tc"
+set -gs escape-time 10
+set -g message-limit 1000
+
+################################### session #################################### 
+
+set -g base-index 1
+set -g display-panes-active-colour $SOLARIZED_BLUE
+set -g display-panes-colour $SOLARIZED_ORANGE
+set -g display-panes-time 3000
+set -g display-time 3000
+set -g message-command-style fg=$SOLARIZED_BACK,bg=$SOLARIZED_ORANGE
+set -g message-style fg=$SOLARIZED_BACK,bg=$SOLARIZED_ORANGE
+set -g renumber-windows on
+set -g status on
+set -g status-interval 1
+set -g status-justify centre
+set -g status-keys vi
+set -g status-left "#[fg=$SOLARIZED_BLUE]#S#[fg=default]:#[fg=$SOLARIZED_CYAN]#I#[fg=default].#[fg=$SOLARIZED_BASE2]#P"
+set -g status-left-length 40
+set -g status-position bottom
+set -g status-right "#[fg=$SOLARIZED_BASE2]#(~/.config/sway/status.sh)"
+set -g status-right-length 70
+set -g status-style bold
+
+#################################### window ####################################
+
+setw -g allow-rename on
+setw -g clock-mode-colour $SOLARIZED_ORANGE
+setw -g clock-mode-style 24
+setw -g mode-keys vi
+setw -g mode-style fg=$SOLARIZED_BACK,bg=$SOLARIZED_ORANGE
+setw -g pane-active-border-style fg=$SOLARIZED_BLUE
+setw -g pane-base-index 1
+setw -g pane-border-style fg=$SOLARIZED_BASE2
+setw -g window-status-activity-style fg=$SOLARIZED_RED
+setw -g window-status-bell-style fg=$SOLARIZED_RED
+setw -g window-status-current-style fg=$SOLARIZED_BLUE
+setw -g window-status-last-style fg=$SOLARIZED_BASE2
+
+# vim: ft=tmux
