@@ -1,0 +1,47 @@
+font=DejaVuSansMono Nerd Font 9
+
+background=1c1c1c
+border=1c1c1c
+
+button-padding=0
+button-border-size=3
+border-bottom-size=0
+button-background=4e4e4e
+button-gap=3
+button-dismiss-gap=0
+message-padding=5
+dismiss-button= ✗ 
+detailed-button= ℹ 
+
+[normal]
+text=e4e4e4
+
+[info]
+text=0087ff
+
+[warning]
+text=d75f00
+background=1c1c1c
+border=1c1c1c
+border-bottom-size=0
+button-padding=0
+button-border-size=3
+button-background=4e4e4e
+button-gap=10
+button-dismiss-gap=0
+message-padding=5
+
+[error]
+text=ff0000
+background=1c1c1c
+border=1c1c1c
+border-bottom-size=0
+button-padding=0
+button-border-size=3
+button-background=4e4e4e
+button-gap=10
+button-dismiss-gap=0
+message-padding=5
+
+[success]
+text=5faf00
