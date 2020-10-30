@@ -1,0 +1,187 @@
+# set precision to "physical" dimensions
+scale = 100
+
+############################ mathematical constants ############################
+
+pi = 4*a(1)
+e = e(1)
+
+############################# scientific constants #############################
+
+# electrodynamics
+c = 299792458 # [m/s] speed of light
+e_0 = 8.85418781762*10^-12 # [A*s/(Vm)] vacuum electric permittivity
+m_0 = 12.566370614*10^-7 # [N/A^2] vacuum magnetic permeability
+e_c = 1.602176565*10^-19 # [C] elementary charge
+
+# thermodynamics
+n_a = 6.02214129*10^23 # [1/mol] Avogadro
+k_b = 1.3806488*10^-23 # [J/K] Boltzmann
+r = 8.3144621 # [J/(mol*K)] universal gas constant
+cal = 4.1868 # [J] calorie
+
+# atomic physics
+mp = 1.672621777*10^-27 # [kg] proton mass
+me = 9.10938291*10^-31 # [kg] elektron mass
+mn = 1.674927351*10^-27 # [kg] neutron mass
+mm = 1.883531475*10^-28 # [kg] myon mass
+ma = 6.64465675*10^-27 # [kg] alpha particle mass
+a_0 = 0.52917721092*10^-10 # [m] Bohr radius
+ev = 1.602176565*10^-19 # [J] electronvolt
+h = 6.62606957*10^-34 # [J*s] Plank constant
+hbar = h/(2*pi)
+u = 1.660538921*10^-27 # [kg] atomic mass unit
+fsc = 7.29735257*10^-3 # [1] fine-structure constant
+
+# solid-state physics
+mc_nacl = 1.747565 # [1] madelung constant for NaCl structure
+mc_cscl = 1.762675 # [1] madelung constant for CsCl structure
+mc_zns  = 1.633806 # [1] madelung constant for ZnS structure
+
+############################### scientific units ###############################
+
+atm = 101.325*10^3 # [Pa] physical atmosphere
+bar = 100*10^3 # [Pa] SI pressure unit
+
+############################# additional functions #############################
+
+# factorial
+define fac(x) {
+    if(x > 1) {
+        return x * fac(x-1);
+    } else {
+        return 1;
+    }
+}
+
+# exponential
+define exp(x) {
+    return exp(x);
+}
+
+# (hyperbolic) sine
+define sin(x) {
+    return s(x);
+}
+
+define sinh(x) {
+    return 1/2*(e(x)-e(-x));
+}
+
+# (hyperbolic) cosine
+define cos(x) {
+    return c(x);
+}
+
+define cosh(x) {
+    return 1/2*(e(x)+e(-x));
+}
+
+# (hyperbolic) tangent
+define tan(x) {
+    return (s(x)/c(x));
+}
+
+define tanh(x) {
+    return sinh(x)/cosh(x);
+}
+
+define coth(x) {
+    return cosh(x)/sinh(x);
+}
+
+# arbitrary power function
+define pow(bas,exp) {
+    return (e(exp*l(bas)));
+}
+
+# arbitrary logarithm function
+define log(bas,val) {
+    return (l(val)/l(bas))
+}
+
+# root regarding arbitrary exponent
+define root(rad,exp) {
+    return (pow(rad,1/exp));
+}
+
+# signum function
+define sgn(x) {
+    if(x == 0) {
+        return (0);
+    } else if(x > 0) {
+        return (1);
+    } else {
+        return (-1);
+    }
+}
+
+# arcsine
+define asin(x) {
+    return (sgn(x)*a(sqrt(x^2/(1-x^2))));
+}
+
+# scientific format
+define void sciform(x) {
+    auto l, s, exp;
+
+    l = length(x);
+    s = scale(x);
+    exp = 0;
+
+    if (l == s) {
+        while (10^exp*x < 1) {
+            exp += 1;
+        }
+        print x*10^exp, "*10^-", exp, "\n";
+    } else {
+        exp = l - s - 1;
+        print x/10^exp, "*10^", exp, "\n";
+    }
+}
+
+define gamma(vel) {
+    return 1/sqrt(1-vel^2/c^2)
+}
+
+################################# conversions ##################################
+
+define rad2deg(rad) {
+    return (rad*180/pi);
+}
+
+define deg2rad(deg) {
+    return (deg/180*pi);
+}
+
+define c2k(celsius) {
+    return (celsius + 273.15);
+}
+
+define k2c(kelvin) {
+    return (kelvin - 273.15);
+}
+
+define ev2j(electronvolt) {
+    return (electronvolt * e_c);
+}
+
+define j2ev(joule) {
+    return (joule / e_c);
+}
+
+define j2cal(joule) {
+    return (joule / 4.1868);
+}
+
+define cal2j(cal) {
+    return (cal * 4.1868);
+}
+
+define pa2torr(pa) {
+    return (760/101325*pa);
+}
+
+define torr2pa(torr) {
+    return (101325/760*torr);
+}
