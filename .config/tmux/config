@@ -34,13 +34,13 @@ bind '"' split-window -v -c "#{pane_current_path}"
 # join target pane into current window
 bind + command-prompt "join-pane -t :. -s '%%'"
 
-# activate mouse support
-bind m setw -g mouse on\;\
-       display "mouse-support → on"
+# mouse support
+bind m setw -g mouse on
+bind M setw -g mouse off
 
-# deactivate mouse support
-bind M setw -g mouse off\;\
-       display "mouse-support → off"
+# show activity in windows
+bind a set -g monitor-activity on
+bind A set -g monitor-activity off
 
 # enable scrolling with the mouse
 bind -T root WheelUpPane select-pane -t = \; copy-mode -t = \; send-keys -M
@@ -58,10 +58,11 @@ bind j select-pane -D
 bind k select-pane -U
 bind l select-pane -R
 
+
 #################################### server #################################### 
 
-set -g default-terminal    "tmux-256color"
-# 24 bit color support
+set -g default-terminal "tmux-256color"
+# 24 bit color
 set -as terminal-overrides ",alacritty*:Tc"
 set -gs escape-time 10
 set -g message-limit 1000
@@ -80,12 +81,12 @@ set -g status on
 set -g status-interval 1
 set -g status-justify centre
 set -g status-keys vi
-set -g status-left "#[fg=$SOLARIZED_BLUE]#S#[fg=default]:#[fg=$SOLARIZED_CYAN]#I#[fg=default].#[fg=$SOLARIZED_BASE2]#P"
-set -g status-left-length 40
 set -g status-position bottom
-set -g status-right "#[fg=$SOLARIZED_BASE2]#(~/.config/sway/status.sh)"
-set -g status-right-length 70
-set -g status-style bold
+set -g status-left "#[bg=$SOLARIZED_BASE01]#[fg=$SOLARIZED_BASE2]﬿ #S:#I.#P #{?#{m:*Z,#{window_flags}},#[$SOLARIZED_BASE2],#[fg=$SOLARIZED_BACK]} #{?monitor-activity,#[fg=$SOLARIZED_BASE2],#[fg=$SOLARIZED_BACK]} #{?mouse,#[fg=$SOLARIZED_BASE2],#[fg=$SOLARIZED_BACK]}#[fg=$SOLARIZED_BASE01]#[bg=default]"
+set -g status-right "#[fg=$SOLARIZED_BASE01,bg=default]#[fg=$SOLARIZED_BASE2,bg=$SOLARIZED_BASE01] %a %d.%m.%y %R"
+set -g status-left-length 50
+set -g status-right-length 50
+set -g status-style bg=default
 
 #################################### window ####################################
 
@@ -99,7 +100,7 @@ setw -g pane-base-index 1
 setw -g pane-border-style fg=$SOLARIZED_BASE2
 setw -g window-status-activity-style fg=$SOLARIZED_RED
 setw -g window-status-bell-style fg=$SOLARIZED_RED
-setw -g window-status-current-style fg=$SOLARIZED_BLUE
-setw -g window-status-last-style fg=$SOLARIZED_BASE2
+setw -g window-status-current-format "#[fg=$SOLARIZED_BLUE]#[fg=white]#[bg=$SOLARIZED_BLUE]#I#[fg=$SOLARIZED_BLUE]#[bg=$SOLARIZED_BASE01]#[fg=$SOLARIZED_BASE2] #W#[fg=$SOLARIZED_BASE01]#[bg=default]"
+setw -g window-status-format "#{?window_activity_flag,#[fg=$SOLARIZED_RED]#[bg=$SOLARIZED_RED],#[fg=$SOLARIZED_BASE0]#[bg=$SOLARIZED_BASE0]}#[fg=$SOLARIZED_BACK]#I#[bg=$SOLARIZED_BASE01]#{?window_activity_flag,#[fg=$SOLARIZED_RED],#[fg=$SOLARIZED_BASE0]}#[fg=$SOLARIZED_BACK] #W#[fg=$SOLARIZED_BASE01]#[bg=default]"
 
 # vim: ft=tmux
