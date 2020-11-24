@@ -1,9 +1,9 @@
 #! /bin/bash
 
 # https://github.com/ryanoasis/nerd-fonts
-the=(     )
+the=(     )
 bty=(          )
-spk=(婢 奄 奔 墳 )
+spk=(婢 奄 奔 墳 墳)
 sun=(      )
 blt=('' ⚡)
 
@@ -16,6 +16,6 @@ bri=$(printf "%1.f" $(light -s sysfs/backlight/auto))
 vol=$(amixer sget Master | awk 'NR == 4 { max = $5 } ; NR == 6 { printf("%1.f", $4/max*100) }')
 mut=$(amixer sget Master | awk '/  Front Left/ { if ($6=="[off]") print 0; else print 1 }')
 kbm=$(swaymsg -t get_inputs -p | grep -A 5 -e 'AT Translated' | tail -n 1 | cut -d ' ' -f6)
-date=$(date +'%a %d.%m.%y %H:%M')
+dat=$(date +'%a %d.%m.%y %H:%M')
 
-echo " ${bty[$bat/10]}${blt[$onl]} ${bat}%  ${sun[$bri/15]} ${bri}% ${spk[$mut*((1+$vol/30)*($vol<=100)+4*($vol>100))]} ${vol}%  ﬙ ${mem}%   ${avg}%  ${the[$tmp/20]} ${tmp}℃   $kbm   ${date} "
+echo " ${bty[$bat/10]}${blt[$onl]} ${bat}%  ${sun[$bri/15]} ${bri}%  ${spk[$mut*((1+$vol/30)*($vol<=100)+4*($vol>100))]} ${vol}%  ﬙ ${mem}%  龍 ${avg}%  ${the[$tmp/20]} ${tmp}℃   $kbm   ${dat} "

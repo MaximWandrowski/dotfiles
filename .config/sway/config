@@ -4,8 +4,11 @@
 
 xwayland enable
 
+font pango: DejaVuSansMono Nerd Font 9
+
 default_border pixel 1
 default_floating_border none
+titlebar_padding 2
 
 hide_edge_borders smart
 
@@ -258,6 +261,7 @@ bindsym XF86MonBrightnessUp exec light -s sysfs/backlight/auto -A 10
 # bindsym XF86WLAN
 # bindsym XF86WebCam
 
+
 ################################################################################
 #                                  STATUS BAR                                  #
 #                                                                              #
@@ -266,18 +270,16 @@ bindsym XF86MonBrightnessUp exec light -s sysfs/backlight/auto -A 10
 
 bar {
   position top
-
-  # When the status_command prints a new line to stdout, swaybar updates.
-  # The default just shows the current date and time.
+  font pango: DejaVuSansMono Nerd Font 9
   status_command while ~/.config/sway/status.sh ; do sleep 1; done
+  status_padding 0
+  tray_padding 0
 
   colors {
     statusline #e4e4e4
     background #4e4e4e
     inactive_workspace #8a8a8a #4e4e4e #8a8a8a
   }
-
-  font pango: DejaVuSansMono Nerd Font 9
 }
 
 include /etc/sway/config.d/*
