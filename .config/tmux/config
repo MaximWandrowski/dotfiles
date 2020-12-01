@@ -35,12 +35,10 @@ bind '"' split-window -v -c "#{pane_current_path}"
 bind + command-prompt "join-pane -t :. -s '%%'"
 
 # mouse support
-bind m setw -g mouse on
-bind M setw -g mouse off
+bind m set -g mouse
 
 # show activity in windows
-bind a set -g monitor-activity on
-bind A set -g monitor-activity off
+bind a set -g monitor-activity
 
 # enable scrolling with the mouse
 bind -T root WheelUpPane select-pane -t = \; copy-mode -t = \; send-keys -M
