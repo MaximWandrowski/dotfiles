@@ -23,6 +23,14 @@ export PATH=$PATH:$ANDROID_SDK_ROOT/emulator
 
 ################################### python #####################################
 
+# stuff installed with pip install --user
+export PATH=$PATH:$HOME/.local/bin
+
+# pyenv
+export PATH=$HOME/.pyenv/bin:$PATH
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+
 # include python virtual environments within project
 export PIPENV_VENV_IN_PROJECT=1
 
@@ -46,6 +54,7 @@ nvm() {
     # load bash completion for npm
     type npm &> /dev/null && source <(npm completion)
 }
+
 
 ################################################################################
 #                                    PROMPT                                    #
