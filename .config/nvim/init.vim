@@ -59,6 +59,9 @@ autocmd FileType make setl tabstop=8
 autocmd FileType make setl shiftwidth=8
 autocmd FileType make setl noexpandtab
 
+" YAML
+autocmd FileType yaml setk cursorcolumn
+
 " html
 let g:html_indent_script1 = "inc"
 let g:html_indent_style1  = "inc"
@@ -118,15 +121,16 @@ let mapleader=";"
 
 "                                   personal                                   "
 
-nmap <leader>e :exec':tabnew '.stdpath('config').'/init.vim'<cr>
-nmap <leader>r :exec':source '.stdpath('config').'/init.vim'<cr>
-nmap <leader>n :set relativenumber!<cr>
-nmap <leader>N :set number!<cr>
-nmap <leader>h :set nohls!<cr>
-nmap <leader>t :let &textwidth = ( &textwidth > 0 ? 0 : 80 )<cr>
-nmap <leader>c :set cursorline!<cr>
-nmap <leader>f :NERDTreeToggle<cr>
-nmap <leader>p :CocCommand prettier.formatFile<cr>
+nmap <leader>e  :exec':tabnew '.stdpath('config').'/init.vim'<cr>
+nmap <leader>r  :exec':source '.stdpath('config').'/init.vim'<cr>
+nmap <leader>n  :set relativenumber!<cr>
+nmap <leader>N  :set number!<cr>
+nmap <leader>h  :set nohls!<cr>
+nmap <leader>t  :let &textwidth = ( &textwidth > 0 ? 0 : 80 )<cr>
+nmap <leader>cl :set cursorline!<cr>
+nmap <leader>cc :set cursorcolumn!<cr>
+nmap <leader>f  :NERDTreeToggle<cr>
+nmap <leader>p  :CocCommand prettier.formatFile<cr>
 
 "                                   coc.nvim                                   "
 
