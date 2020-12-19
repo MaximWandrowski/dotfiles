@@ -60,7 +60,7 @@ autocmd FileType make setl shiftwidth=8
 autocmd FileType make setl noexpandtab
 
 " YAML
-autocmd FileType yaml setk cursorcolumn
+autocmd FileType yaml setl cursorcolumn
 
 " html
 let g:html_indent_script1 = "inc"
