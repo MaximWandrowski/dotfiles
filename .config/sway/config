@@ -73,8 +73,8 @@ exec $led_cmd
 # another 300 seconds, and turn screens back on when resumed. It will also lock
 # the screen before computer goes to sleep.
 exec swayidle -w \
-  timeout 300 $lock_cmd \
-  timeout 600 'swaymsg "output * dpms off"' \
+  timeout 900 $lock_cmd \
+  timeout 1800 'swaymsg "output * dpms off"' \
   resume 'swaymsg "output * dpms on"' \
   before-sleep $lock_cmd
 
@@ -108,6 +108,9 @@ bindsym $mod+Shift+c kill
 
 # Start your launcher
 bindsym $mod+r exec $menu
+
+# Toggle swaybar
+bindsym $mod+t bar mode toggle
 
 # Drag floating windows by holding down $mod and left mouse button.
 # Resize them with right mouse button + $mod.
