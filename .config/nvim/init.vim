@@ -68,11 +68,10 @@ let g:html_indent_style1  = "inc"
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                   PLUGINS                                    "
-"                                                                              "
-" FROM: https://github.com/junegunn/vim-plug/wiki/tips#automatic-installation  "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " install vim-plug if not found
+" FROM: https://github.com/junegunn/vim-plug/wiki/tips#automatic-installation
 if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
   silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -119,7 +118,7 @@ lua require'colorizer'.setup()
 
 let mapleader=";"
 
-"                                   personal                                   "
+""""""""""""""""""""""""""""""""""" personal """""""""""""""""""""""""""""""""""
 
 nmap <leader>e  :exec':tabnew '.stdpath('config').'/init.vim'<cr>
 nmap <leader>r  :exec':source '.stdpath('config').'/init.vim'<cr>
@@ -132,7 +131,7 @@ nmap <leader>cc :set cursorcolumn!<cr>
 nmap <leader>f  :NERDTreeToggle<cr>
 nmap <leader>p  :CocCommand prettier.formatFile<cr>
 
-"                                   coc.nvim                                   "
+""""""""""""""""""""""""""""""""""" coc.nvim """""""""""""""""""""""""""""""""""
 
 " NOTE: mappings taken from
 " https://github.com/neoclide/coc.nvim/blob/release/Readme.md
@@ -162,7 +161,7 @@ function! s:show_documentation()
 endfunction
 
 " Map function and class text objects
-" NOTE: Requires 'textDocument.documentSymbol' support from the language server.
+" Requires 'textDocument.documentSymbol' support from the language server.
 xmap if <Plug>(coc-funcobj-i)
 omap if <Plug>(coc-funcobj-i)
 xmap af <Plug>(coc-funcobj-a)
