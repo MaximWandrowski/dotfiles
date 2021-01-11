@@ -81,7 +81,7 @@ set -g status-justify centre
 set -g status-keys vi
 set -g status-position bottom
 set -g status-left "#[bg=$SOLARIZED_BASE01]#[fg=$SOLARIZED_BASE2]﬿ #S:#I.#P #{?#{m:*Z,#{window_flags}},#[$SOLARIZED_BASE2],#[fg=$SOLARIZED_BACK]} #{?monitor-activity,#[fg=$SOLARIZED_BASE2],#[fg=$SOLARIZED_BACK]} #{?mouse,#[fg=$SOLARIZED_BASE2],#[fg=$SOLARIZED_BACK]}#[fg=$SOLARIZED_BASE01]#[bg=default]"
-set -g status-right "#[fg=$SOLARIZED_BASE01,bg=default]#[fg=$SOLARIZED_BASE2,bg=$SOLARIZED_BASE01] %a %d.%m.%y %R"
+set -g status-right "#[fg=$SOLARIZED_BASE01,bg=default]#[fg=$SOLARIZED_BASE2,bg=$SOLARIZED_BASE01] %a %d.%m %R"
 set -g status-left-length 50
 set -g status-right-length 50
 set -g status-style bg=default
