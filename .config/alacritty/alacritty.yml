@@ -104,20 +104,20 @@ env:
 
 font:
   normal:
-    family: Hack Nerd Font Mono
-    style: Regular
+    family: DejaVuSansMono Nerd Font Mono
+    style: Book
 
   bold:
-    family: Hack Nerd Font Mono
+    family: DejaVuSansMono Nerd Font Mono
     style: Bold
 
   italic:
-    family: Hack Nerd Font Mono
-    style: Italic
+    family: DejaVuSansMono Nerd Font Mono
+    style: Oblique
 
   bold_italic:
-    family: Hack Nerd Font Mono
-    style: Bold Italic
+    family: DejaVuSansMono Nerd Font Mono
+    style: Bold Oblique
 
   # Point size
   size: 9.0
