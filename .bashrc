@@ -2,8 +2,8 @@
 #                                 ENVIRONMENT                                  # 
 ################################################################################
 
-# include personal binaries in search path
-export PATH=$PATH:$HOME/bin
+# personal binaries
+export PATH=$PATH:$HOME/.local/bin
 
 # standard editor is (neo)vim
 export EDITOR=nvim
@@ -22,9 +22,6 @@ export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
 export PATH=$PATH:$ANDROID_SDK_ROOT/emulator
 
 ################################### python #####################################
-
-# stuff installed with pip install --user
-export PATH=$PATH:$HOME/.local/bin
 
 # pyenv
 export PATH=$HOME/.pyenv/bin:$PATH
