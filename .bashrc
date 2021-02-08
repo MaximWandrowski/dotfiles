@@ -13,7 +13,7 @@ export MANWIDTH=80
 export MANPAGER="sh -c 'col -bx | bat -p -lman'"
 export BAT_THEME="Solarized (dark)"
 
-################################### android  ###################################
+################################### android ####################################
 
 export ANDROID_SDK_ROOT=$HOME/Android/Sdk
 export PATH=$PATH:$ANDROID_SDK_ROOT/tools/bin
@@ -40,16 +40,16 @@ export NVM_DIR="$HOME/.nvm"
 
 # load nvm only when necessary
 nvm() {
-    # remove nvm function
-    unset -f nvm
-    # load nvm
-    [ -r "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-    # load bash_completion
-    [ -r "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
-    # call nvm
-    nvm "$@"
-    # load bash completion for npm
-    type npm &> /dev/null && source <(npm completion)
+  # remove nvm function
+  unset -f nvm
+  # load nvm
+  [ -r "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
+  # load bash_completion
+  [ -r "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
+  # call nvm
+  nvm "$@"
+  # load bash completion for npm
+  type npm &> /dev/null && source <(npm completion)
 }
 
 
@@ -64,42 +64,42 @@ export PROMPT_DIRTRIM=3
 export PROMPT_COMMAND='prompt_command'
 
 prompt_command() {
-    # preserve exit value
-    local exit=$?
+  # preserve exit value
+  local exit=$?
 
-    # construct potential additions
-    declare -A prompt
-    # background jobs
-    [ `jobs | wc -l` -gt 0 ] && prompt[job]=' \e[31;1mjobs:'`jobs | wc -l`'\e[0m'
-    # ssh remote host
-    [ -n "$SSH_TTY" ] && prompt[ssh]='\e[37;1m@\e[36;1m\h\e[0m'
-    # node.js version
-    [ -n "$NVM_BIN" ] && prompt[nvm]=' \e[35;1mnvm:'${NVM_BIN//@(*\/node\/|\/bin)/}'\e[0m'
-    # python virtual environment
-    [ -n "$VIRTUAL_ENV" ] && {
-        prompt[pve]=' \e[35;1mpve:'`basename $VIRTUAL_ENV`'\e[0m'
-    } || {
-        unset prompt[pve]
-    }
-    # git status
-    [ -r /usr/share/git/git-prompt.sh ] && {
-        source /usr/share/git/git-prompt.sh
-        export GIT_PS1_SHOWDIRTYSTATE=true
-        export GIT_PS1_SHOWSTASHSTATE=true
-        export GIT_PS1_SHOWUPSTREAM="auto"
-        #export GIT_PS1_SHOWCOLORHINTS=true
-        #export GIT_PS1_SHOWUNTRACKEDFILES=true
-        export GIT_PS1_STATESEPARATOR=":"
-        #export GIT_PS1_DESCRIBE_STYLE="default"
-        #export GIT_PS1_HIDE_IF_PWD_IGNORED=true
-        prompt[git]=' \e[32;1m'`__git_ps1 "git:%s"`'\e[0m'
-    }
+  # construct potential additions
+  declare -A prompt
+  # background jobs
+  [ `jobs | wc -l` -gt 0 ] && prompt[job]=' \e[31;1mjobs:'`jobs | wc -l`'\e[0m'
+  # ssh remote host
+  [ -n "$SSH_TTY" ] && prompt[ssh]='\e[37;1m@\e[36;1m\h\e[0m'
+  # node.js version
+  [ -n "$NVM_BIN" ] && prompt[nvm]=' \e[35;1mnvm:'${NVM_BIN//@(*\/node\/|\/bin)/}'\e[0m'
+  # python virtual environment
+  [ -n "$VIRTUAL_ENV" ] && {
+    prompt[pve]=' \e[35;1mpve:'`basename $VIRTUAL_ENV`'\e[0m'
+  } || {
+    unset prompt[pve]
+  }
+  # git status
+  [ -r /usr/share/git/git-prompt.sh ] && {
+    source /usr/share/git/git-prompt.sh
+    export GIT_PS1_SHOWDIRTYSTATE=true
+    export GIT_PS1_SHOWSTASHSTATE=true
+    export GIT_PS1_SHOWUPSTREAM="auto"
+    #export GIT_PS1_SHOWCOLORHINTS=true
+    #export GIT_PS1_SHOWUNTRACKEDFILES=true
+    export GIT_PS1_STATESEPARATOR=":"
+    #export GIT_PS1_DESCRIBE_STYLE="default"
+    #export GIT_PS1_HIDE_IF_PWD_IGNORED=true
+    prompt[git]=' \e[32;1m'`__git_ps1 "git:%s"`'\e[0m'
+  }
 
-    # construct PS1
-    PS1='┌┤ \e[32;1m\u'${prompt[ssh]}' \e[37;1m\w\e[0m │'${prompt[job]}${prompt[pve]}${prompt[nvm]}${prompt[git]}'\n└▶ '
+  # construct PS1
+  PS1='┌┤ \e[32;1m\u'${prompt[ssh]}' \e[37;1m\w\e[0m │'${prompt[job]}${prompt[pve]}${prompt[nvm]}${prompt[git]}'\n└▶ '
 
-    # reset exit value
-    return $exit
+  # reset exit value
+  return $exit
 }
 
 # secondary prompt
@@ -170,6 +170,7 @@ alias ncmpc='ncmpc -c'
 # load .tmux.conf from $XDG_CONFIG_HOME/tmux
 alias tmux='tmux -f ~/.config/tmux/config'
 
+
 ################################################################################
 #                                  COMPLETION                                  # 
 ################################################################################
@@ -177,7 +178,13 @@ alias tmux='tmux -f ~/.config/tmux/config'
 ##################################### git ###################################### 
 
 [ -r /usr/share/git/completion/git-completion.bash ] && {
-    source /usr/share/git/completion/git-completion.bash
+  source /usr/share/git/completion/git-completion.bash
 }
 # also for dotfiles alias
 eval `complete -p git | sed 's/\w*$//'` dotfiles
+
+################################## terraform ################################### 
+
+[ -r /usr/bin/terraform ] && {
+  complete -C /usr/bin/terraform terraform
+}
