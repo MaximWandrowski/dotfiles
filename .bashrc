@@ -105,16 +105,13 @@ prompt_command() {
 # secondary prompt
 PS2='\e[1A│ \e[1B\e[2D└▶ '
 
-# use vi key bindings
-# remember, that for C-L to clear the screen in insert mode you have to add
-#
-#    "\C-L": clear-screen
-#
-# to your .inputrc
+################################### bindings ################################### 
+
+# select vi key bindings
 set -o vi
 
-# colorized `ls'
-eval `dircolors ~/.config/dircolors/config`
+# bind Ctrl-l to clear screen in vi mode
+bind -m vi-insert "\C-l":clear-screen
 
 ################################################################################
 #                                   ALIASES                                    #
