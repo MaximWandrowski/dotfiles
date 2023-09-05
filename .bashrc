@@ -10,7 +10,7 @@ export EDITOR=nvim
 
 # fancy man-pages
 export MANWIDTH=80
-export MANPAGER="sh -c 'col -bx | bat -p -lman'"
+#export MANPAGER="sh -c 'col -bx | bat -p -lman'"
 export BAT_THEME="Solarized (dark)"
 
 ################################### android ####################################

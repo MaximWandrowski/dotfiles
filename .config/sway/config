@@ -256,11 +256,11 @@ bindsym XF86Launch1 exec swaymsg 'input $keyboard xkb_switch_layout next'
 bindsym XF86ScreenSaver exec $lock_cmd
 bindsym XF86Sleep exec systemctl suspend
 bindsym XF86PowerOff exec swaynag -t normal -m 'power options' \
-  -z ' 襤 poweroff ' 'systemctl poweroff' \
-  -z ' 勒 reboot ' 'systemctl reboot' \
-  -z ' ﬙  hybrid ' 'systemctl hybrid-sleep' \
-  -z '  hibernate ' 'systemctl hibernate' \
-  -z ' ﬙ suspend ' 'systemctl suspend'
+  -z ' 󰐥 poweroff ' 'systemctl poweroff' \
+  -z ' ⟳reboot ' 'systemctl reboot' \
+  -z ' 󰍛 󰋊 hybrid ' 'systemctl hybrid-sleep' \
+  -z ' 󰋊 hibernate ' 'systemctl hibernate' \
+  -z ' 󰍛 suspend ' 'systemctl suspend'
 bindsym XF86Display exec wdisplays
 bindsym XF86MonBrightnessDown exec light -s sysfs/backlight/auto -U 10
 bindsym XF86MonBrightnessUp exec light -s sysfs/backlight/auto -A 10
