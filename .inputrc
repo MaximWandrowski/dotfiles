@@ -1,5 +1,0 @@
-# make C-L clear the screen in vi insert mode
-"\C-L": clear-screen
-
-# colored completion to indicate file type (following LS_COLORS)
-set colored-stats on

@@ -105,13 +105,13 @@ prompt_command() {
 # secondary prompt
 PS2='\e[1A│ \e[1B\e[2D└▶ '
 
+################################### bindings ################################### 
+
 # use vi key bindings
-# remember, that for C-L to clear the screen in insert mode you have to add
-#
-#    "\C-L": clear-screen
-#
-# to your .inputrc
 set -o vi
+
+# bind Ctrl-l to clear screen in vi mode
+bind -m vi-insert "\C-l":clear-screen
 
 # colorized `ls'
 eval `dircolors ~/.config/dircolors/config`
@@ -170,7 +170,6 @@ alias ncmpc='ncmpc -c'
 # load .tmux.conf from $XDG_CONFIG_HOME/tmux
 alias tmux='tmux -f ~/.config/tmux/config'
 
-
 ################################################################################
 #                                  COMPLETION                                  # 
 ################################################################################
@@ -188,3 +187,9 @@ eval `complete -p git | sed 's/\w*$//'` dotfiles
 [ -r /usr/bin/terraform ] && {
   complete -C /usr/bin/terraform terraform
 }
+
+################################################################################
+#                                  EYE CANDY                                   #
+################################################################################
+
+eval `dircolors ~/config/dircolors/config`
