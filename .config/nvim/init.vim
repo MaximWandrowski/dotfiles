@@ -6,6 +6,15 @@ if has('termguicolors')
   set termguicolors
 endif
 
+function ToggleBackground()
+  if(w:solarized_style=="dark")
+    let w:solarized_style="light"
+  else
+    let w:solarized_style="dark"
+  endif
+  colorscheme solarized
+endfunction
+
 set background=dark
 colorscheme solarized
 
@@ -120,6 +129,7 @@ let mapleader=";"
 
 """"""""""""""""""""""""""""""""""" personal """""""""""""""""""""""""""""""""""
 
+nmap <leader>b  :call ToggleBackground()<cr>
 nmap <leader>e  :exec':tabnew '.stdpath('config').'/init.vim'<cr>
 nmap <leader>r  :exec':source '.stdpath('config').'/init.vim'<cr>
 nmap <leader>n  :set relativenumber!<cr>
