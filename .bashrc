@@ -113,9 +113,6 @@ set -o vi
 # bind Ctrl-l to clear screen in vi mode
 bind -m vi-insert "\C-l":clear-screen
 
-# colorized `ls'
-eval `dircolors ~/.config/dircolors/config`
-
 ################################################################################
 #                                   ALIASES                                    #
 ################################################################################
@@ -192,4 +189,4 @@ eval `complete -p git | sed 's/\w*$//'` dotfiles
 #                                  EYE CANDY                                   #
 ################################################################################
 
-eval `dircolors ~/config/dircolors/config`
+eval `dircolors ~/.config/dircolors/config`
