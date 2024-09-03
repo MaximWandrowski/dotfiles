@@ -164,8 +164,6 @@ alias urxvt='urxvtcd'
 # ncmpc with color by default
 alias ncmpc='ncmpc -c'
 
-# load .tmux.conf from $XDG_CONFIG_HOME/tmux
-alias tmux='tmux -f ~/.config/tmux/config'
 
 
 ################################################################################
