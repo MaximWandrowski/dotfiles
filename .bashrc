@@ -13,23 +13,33 @@ export MANWIDTH=80
 export MANPAGER="sh -c 'col -bx | bat -p -lman'"
 export BAT_THEME="Solarized (dark)"
 
-################################### android ####################################
+##################################### aws ######################################
 
-export ANDROID_SDK_ROOT=$HOME/Android/Sdk
-export PATH=$PATH:$ANDROID_SDK_ROOT/tools/bin
-export PATH=$PATH:$ANDROID_SDK_ROOT/build-tools 
-export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
-export PATH=$PATH:$ANDROID_SDK_ROOT/emulator
+get_aws_creds() {
+  [ -z "$1" ] && {
+    read -p 'MFA Token Code: ' MFA_CODE
+  }
+  MFA_ARN='arn:aws:iam::059308602976:mfa/SamsungGalaxyS10'
+
+  cat \
+    <(sed -n '/\[mfa\]/q;p' "$HOME/.aws/credentials") \
+    <(aws sts get-session-token --serial-number "$MFA_ARN" --token-code "${1:-$MFA_CODE}" \
+      | jq -r '.Credentials | "[mfa]\naws_access_key_id = \(.AccessKeyId)\naws_secret_access_key = \(.SecretAccessKey)\naws_session_token = \(.SessionToken)\n"' \
+      | sed 's/\\n/\n/g'
+    ) | tee "$HOME/.aws/new_credentials"
+
+  [ -s "$HOME/.aws/new_credentials" ] && {
+    mv -i "$HOME/.aws/new_credentials" "$HOME/.aws/credentials"
+  }
+}
 
 ################################### python #####################################
 
 # pyenv
-export PATH=$HOME/.pyenv/bin:$PATH
-eval "$(pyenv init -)"
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - bash)"
 eval "$(pyenv virtualenv-init -)"
-
-# include python virtual environments within project
-export PIPENV_VENV_IN_PROJECT=1
 
 # hide ugly python virtual environmnet prefix (handled in prompt_command)
 export VIRTUAL_ENV_DISABLE_PROMPT=1
@@ -58,7 +68,7 @@ nvm() {
 ################################################################################
 
 # only show 3 folders in prompt path
-export PROMPT_DIRTRIM=3
+export PROMPT_DIRTRIM=2
 
 # the function contained in PROMPT_COMMAND constructs PS1
 export PROMPT_COMMAND='prompt_command'
@@ -69,41 +79,34 @@ prompt_command() {
 
   # construct potential additions
   declare -A prompt
-  # background jobs
-  [ `jobs | wc -l` -gt 0 ] && prompt[job]=' \e[31;1mjobs:'`jobs | wc -l`'\e[0m'
   # ssh remote host
-  [ -n "$SSH_TTY" ] && prompt[ssh]='\e[37;1m@\e[36;1m\h\e[0m'
+  [ -n "$SSH_TTY" ] && prompt[ssh]='\e[30m\u@\h' || { prompt[ssh]='\e[30m\u'; }
+  # exit status of last command
+  [ $exit -ne 0 ] && prompt[exit]='\e[1D\e[101m \e[30m✗ '$exit'\e[91;49m'
+  # background jobs
+  [ `jobs | wc -l` -gt 0 ] && prompt[job]='\e[1D\e[103m \e[30m '`jobs | wc -l | tr -d " \t"`'\e[93;49m'
   # node.js version
-  [ -n "$NVM_BIN" ] && prompt[nvm]=' \e[35;1mnvm:'${NVM_BIN//@(*\/node\/|\/bin)/}'\e[0m'
+  [ -n "$NVM_BIN" ] && prompt[nvm]='\e[1D\e[105m \e[30m󰎙 '${NVM_BIN//@(*\/node\/|\/bin)/}'\e[95;49m'
   # python virtual environment
   [ -n "$VIRTUAL_ENV" ] && {
-    prompt[pve]=' \e[35;1mpve:'`basename $VIRTUAL_ENV`'\e[0m'
+    prompt[pve]='\e[1D\e[105m \e[30m '`basename $VIRTUAL_ENV`'\e[95;49m'
   } || {
     unset prompt[pve]
   }
   # git status
-  [ -r /usr/share/git/git-prompt.sh ] && {
-    source /usr/share/git/git-prompt.sh
-    export GIT_PS1_SHOWDIRTYSTATE=true
-    export GIT_PS1_SHOWSTASHSTATE=true
-    export GIT_PS1_SHOWUPSTREAM="auto"
-    #export GIT_PS1_SHOWCOLORHINTS=true
-    #export GIT_PS1_SHOWUNTRACKEDFILES=true
-    export GIT_PS1_STATESEPARATOR=":"
-    #export GIT_PS1_DESCRIBE_STYLE="default"
-    #export GIT_PS1_HIDE_IF_PWD_IGNORED=true
-    prompt[git]=' \e[32;1m'`__git_ps1 "git:%s"`'\e[0m'
+  [ -z `git branch -q --show-current 2>/dev/null` ] && unset prompt[git] || {
+    prompt[git]='\e[1D\e[102m \e[30m󰘬 '`git branch --show-current | tr -d "\n"`'\e[92;49m'
   }
 
   # construct PS1
-  PS1='┌┤ \e[32;1m\u'${prompt[ssh]}' \e[37;1m\w\e[0m │'${prompt[job]}${prompt[pve]}${prompt[nvm]}${prompt[git]}'\n└▶ '
+  PS1='\n\e[34m╭──\e[44m'${prompt[ssh]}'\e[34;47m \e[30m\w\e[37;49m'${prompt[pve]}${prompt[nvm]}${prompt[git]}${prompt[job]}${prompt[exit]}'\n\e[34m│\e[0m  \n\[\e[34m\]╰─▶ \[\e[0m\]'
 
   # reset exit value
   return $exit
 }
 
 # secondary prompt
-PS2='\e[1A│ \e[1B\e[2D└▶ '
+PS2='\[\e[1A\e[34m│ \e[37m▷\[\e[1B\e[3D\e[34m\]╰─▶ \[\e[0m\]'
 
 ################################### bindings ################################### 
 
@@ -154,6 +157,8 @@ alias ln='ln -i'
 # fast folder climbing
 alias ..='cd ..'
 alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
 
 # start bc with the mathlib and personal augmentations
 alias bc='bc -q -l ~/.config/bc/lib'
@@ -164,7 +169,13 @@ alias urxvt='urxvtcd'
 # ncmpc with color by default
 alias ncmpc='ncmpc -c'
 
+################################################################################
+#                                  FUNCTIONS                                   #
+################################################################################
 
+mkcd() {
+  mkdir $1 && cd $1
+}
 
 ################################################################################
 #                                  COMPLETION                                  # 
@@ -175,11 +186,15 @@ alias ncmpc='ncmpc -c'
 [ -r /usr/share/git/completion/git-completion.bash ] && {
   source /usr/share/git/completion/git-completion.bash
 }
-# also for dotfiles alias
-eval `complete -p git | sed 's/\w*$//'` dotfiles
 
 ################################## terraform ################################### 
 
-[ -r /usr/bin/terraform ] && {
+[ -x /usr/bin/terraform ] && {
   complete -C /usr/bin/terraform terraform
+}
+
+##################################### brew ##################################### 
+
+[ -x /usr/local/bin/brew ] && {
+  eval "$(brew shellenv bash)"
 }
