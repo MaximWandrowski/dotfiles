@@ -177,6 +177,29 @@ mkcd() {
   mkdir $1 && cd $1
 }
 
+colortest() {
+  echo
+  # standard 16 colors
+  for i in `seq 0 15`; do
+    echo -en "\e[38;5;"$i"m██"
+    [ "$(( (i + 1) % 8   ))" -eq 0 ] && echo
+  done
+  echo
+
+  # grayscale ramp
+  for i in `seq 232 255`; do
+    echo -en "\e[38;5;"$i"m██"
+    #[ "$(( (i - 231) % 4 ))" -eq 0 ] && echo
+  done
+  echo ; echo
+
+  # 6x6x6 color cube
+  for i in `seq 16 231`; do
+    echo -en "\e[38;5;"$i"m██"
+    [ "$(( (i - 15) % 36 ))" -eq 0 ] && echo
+  done
+}
+
 ################################################################################
 #                                  COMPLETION                                  # 
 ################################################################################
