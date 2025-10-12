@@ -13,36 +13,44 @@ export MANWIDTH=80
 export MANPAGER="sh -c 'col -bx | bat -p -lman'"
 export BAT_THEME="Solarized (dark)"
 
-##################################### aws ######################################
+# hide ugly python virtual environmnet prefix (handled in prompt_command)
+export VIRTUAL_ENV_DISABLE_PROMPT=1
 
-get_aws_creds() {
-  [ -z "$1" ] && {
-    read -p 'MFA Token Code: ' MFA_CODE
-  }
-  MFA_ARN='arn:aws:iam::059308602976:mfa/SamsungGalaxyS10'
+################################################################################
+#                            LANGUAGE INTEGRATIONS                             #
+################################################################################
 
-  cat \
-    <(sed -n '/\[mfa\]/q;p' "$HOME/.aws/credentials") \
-    <(aws sts get-session-token --serial-number "$MFA_ARN" --token-code "${1:-$MFA_CODE}" \
-      | jq -r '.Credentials | "[mfa]\naws_access_key_id = \(.AccessKeyId)\naws_secret_access_key = \(.SecretAccessKey)\naws_session_token = \(.SessionToken)\n"' \
-      | sed 's/\\n/\n/g'
-    ) | tee "$HOME/.aws/new_credentials"
+##################################### java ##################################### 
 
-  [ -s "$HOME/.aws/new_credentials" ] && {
-    mv -i "$HOME/.aws/new_credentials" "$HOME/.aws/credentials"
-  }
+# load jenv only when necessary
+jenv() {
+  # remove jenv function
+  unset -f jenv
+  # load jenv
+  [ -r "$HOME/.jenv/bin/jenv" ] && export PATH="$HOME/.jenv/bin:$PATH"
+  # call jenv
+  jenv "$@"
+  # load jenv shims
+  [ -r "$HOME/.jenv/bin/jenv" ] && eval "$(jenv init -)"
 }
 
 ################################### python #####################################
 
-# pyenv
 export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init - bash)"
-eval "$(pyenv virtualenv-init -)"
 
-# hide ugly python virtual environmnet prefix (handled in prompt_command)
-export VIRTUAL_ENV_DISABLE_PROMPT=1
+# load pyenv only when necessary
+pyenv() {
+  # remove pyenv function
+  unset -f pyenv
+  # load pyenv
+  [ -r "$PYENV_ROOT/bin/pyenv" ] && {
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
+  }
+  # call pyenv
+  pyenv "$@"
+}
 
 ################################### node.js ####################################
 
@@ -61,7 +69,6 @@ nvm() {
   # load bash completion for npm
   type npm &> /dev/null && source <(npm completion)
 }
-
 
 ################################################################################
 #                                    PROMPT                                    #
@@ -90,16 +97,19 @@ prompt_command() {
   # python virtual environment
   [ -n "$VIRTUAL_ENV" ] && {
     prompt[pve]='\e[1D\e[105m \e[30m '`basename $VIRTUAL_ENV`'\e[95;49m'
-  } || {
-    unset prompt[pve]
+  }
+  # java version via jenv
+  [ -n "$JENV_LOADED" ] && {
+    local java_version=$(jenv version-name 2>/dev/null)
+    [ "$java_version" != "system" ] && prompt[java]='\e[1D\e[105m \e[30m '$java_version'\e[95;49m'
   }
   # git status
-  [ -z `git branch -q --show-current 2>/dev/null` ] && unset prompt[git] || {
+  [ -z `git branch -q --show-current 2>/dev/null` ] || {
     prompt[git]='\e[1D\e[102m \e[30m󰘬 '`git branch --show-current | tr -d "\n"`'\e[92;49m'
   }
 
   # construct PS1
-  PS1='\n\e[34m╭──\e[44m'${prompt[ssh]}'\e[34;47m \e[30m\w\e[37;49m'${prompt[pve]}${prompt[nvm]}${prompt[git]}${prompt[job]}${prompt[exit]}'\n\e[34m│\e[0m  \n\[\e[34m\]╰─▶ \[\e[0m\]'
+  PS1='\n\e[34m╭──\e[44m'${prompt[ssh]}'\e[34;47m \e[30m\w\e[37;49m'${prompt[java]}${prompt[pve]}${prompt[nvm]}${prompt[git]}${prompt[job]}${prompt[exit]}'\n\e[34m│\e[0m  \n\[\e[34m\]╰─▶ \[\e[0m\]'
 
   # reset exit value
   return $exit
@@ -172,6 +182,24 @@ alias ncmpc='ncmpc -c'
 ################################################################################
 #                                  FUNCTIONS                                   #
 ################################################################################
+
+get_aws_creds() {
+  [ -z "$1" ] && {
+    read -p 'MFA Token Code: ' MFA_CODE
+  }
+  MFA_ARN='arn:aws:iam::059308602976:mfa/SamsungGalaxyS10'
+
+  cat \
+    <(sed -n '/\[mfa\]/q;p' "$HOME/.aws/credentials") \
+    <(aws sts get-session-token --serial-number "$MFA_ARN" --token-code "${1:-$MFA_CODE}" \
+      | jq -r '.Credentials | "[mfa]\naws_access_key_id = \(.AccessKeyId)\naws_secret_access_key = \(.SecretAccessKey)\naws_session_token = \(.SessionToken)\n"' \
+      | sed 's/\\n/\n/g'
+    ) | tee "$HOME/.aws/new_credentials"
+
+  [ -s "$HOME/.aws/new_credentials" ] && {
+    mv -i "$HOME/.aws/new_credentials" "$HOME/.aws/credentials"
+  }
+}
 
 mkcd() {
   mkdir $1 && cd $1
