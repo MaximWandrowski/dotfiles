@@ -104,8 +104,10 @@ prompt_command() {
     [ "$java_version" != "system" ] && prompt[jenv]='\e[1D\e[105m \e[30m '$java_version'\e[95;49m'
   }
   # git status
-  [ -z `git branch -q --show-current 2>/dev/null` ] || {
-    prompt[git]='\e[1D\e[102m \e[30m󰘬 '`git branch --show-current | tr -d "\n"`'\e[92;49m'
+  [[ `git status 2>/dev/null` =~ ^((HEAD detached at)|(On branch))\ ([^[:space:]]+) ]] && {
+  # match group nunmbers for the  │╰─────── 2 ──────╯ ╰─── 3 ───╯│  ╰───── 4 ─────╯
+  # BASH_REMATCH variable         ╰────────────── 1 ─────────────╯
+    prompt[git]="\e[1D\e[102m \e[30m${BASH_REMATCH[2]:+󰜛}${BASH_REMATCH[3]:+󰘬} ${BASH_REMATCH[4]}\e[92;49m"
   }
 
   # construct PS1
