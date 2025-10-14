@@ -1,5 +1,5 @@
 ################################################################################
-#                                 ENVIRONMENT                                  # 
+#                                 ENVIRONMENT                                  #
 ################################################################################
 
 # personal binaries
@@ -94,14 +94,14 @@ prompt_command() {
   [ `jobs | wc -l` -gt 0 ] && prompt[job]='\e[1D\e[103m \e[30m '`jobs | wc -l | tr -d " \t"`'\e[93;49m'
   # node.js version
   [ -n "$NVM_BIN" ] && prompt[nvm]='\e[1D\e[105m \e[30m󰎙 '${NVM_BIN//@(*\/node\/|\/bin)/}'\e[95;49m'
-  # python virtual environment
-  [ -n "$VIRTUAL_ENV" ] && {
-    prompt[pve]='\e[1D\e[105m \e[30m '`basename $VIRTUAL_ENV`'\e[95;49m'
+  # python via pyenv
+  [ -n "$PYENV_VERSION" ] && {
+    prompt[pyenv]='\e[1D\e[105m \e[30m '$PYENV_VERSION'\e[95;49m'
   }
-  # java version via jenv
+  # java via jenv
   [ -n "$JENV_LOADED" ] && {
     local java_version=$(jenv version-name 2>/dev/null)
-    [ "$java_version" != "system" ] && prompt[java]='\e[1D\e[105m \e[30m '$java_version'\e[95;49m'
+    [ "$java_version" != "system" ] && prompt[jenv]='\e[1D\e[105m \e[30m '$java_version'\e[95;49m'
   }
   # git status
   [ -z `git branch -q --show-current 2>/dev/null` ] || {
@@ -109,7 +109,7 @@ prompt_command() {
   }
 
   # construct PS1
-  PS1='\n\e[34m╭──\e[44m'${prompt[ssh]}'\e[34;47m \e[30m\w\e[37;49m'${prompt[java]}${prompt[pve]}${prompt[nvm]}${prompt[git]}${prompt[job]}${prompt[exit]}'\n\e[34m│\e[0m  \n\[\e[34m\]╰─▶ \[\e[0m\]'
+  PS1='\n\e[34m╭──\e[44m'${prompt[ssh]}'\e[34;47m \e[30m\w\e[37;49m'${prompt[jenv]}${prompt[pyenv]}${prompt[nvm]}${prompt[git]}${prompt[job]}${prompt[exit]}'\n\e[34m│\e[0m  \n\[\e[34m\]╰─▶ \[\e[0m\]'
 
   # reset exit value
   return $exit
