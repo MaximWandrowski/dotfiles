@@ -28,10 +28,10 @@ jenv() {
   unset -f jenv
   # load jenv
   [ -r "$HOME/.jenv/bin/jenv" ] && export PATH="$HOME/.jenv/bin:$PATH"
-  # call jenv
-  jenv "$@"
   # load jenv shims
   [ -r "$HOME/.jenv/bin/jenv" ] && eval "$(jenv init -)"
+  # call jenv
+  jenv "$@"
 }
 
 ################################### python #####################################
@@ -64,17 +64,17 @@ nvm() {
   [ -r "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
   # load bash_completion
   [ -r "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
-  # call nvm
-  nvm "$@"
   # load bash completion for npm
   type npm &> /dev/null && source <(npm completion)
+  # call nvm
+  nvm "$@"
 }
 
 ################################################################################
 #                                    PROMPT                                    #
 ################################################################################
 
-# only show 3 folders in prompt path
+# only show 2 folders in prompt path
 export PROMPT_DIRTRIM=2
 
 # the function contained in PROMPT_COMMAND constructs PS1
@@ -174,12 +174,6 @@ alias .....='cd ../../../..'
 
 # start bc with the mathlib and personal augmentations
 alias bc='bc -q -l ~/.config/bc/lib'
-
-# use the urxvt client/server support (see EXIT STATUS in urxvtc(1))
-alias urxvt='urxvtcd'
-
-# ncmpc with color by default
-alias ncmpc='ncmpc -c'
 
 ################################################################################
 #                                  FUNCTIONS                                   #
