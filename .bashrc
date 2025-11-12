@@ -226,7 +226,7 @@ get_aws_creds() {
 }
 
 mkcd() {
-  mkdir $1 && cd $1
+  mkdir "$1" && cd "$1"
 }
 
 colortest() {
