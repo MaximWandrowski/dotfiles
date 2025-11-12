@@ -29,6 +29,15 @@ kubectl() {
   kubectl "$@"
 }
 
+docker() {
+  # remove docker function
+  unset -f docker
+  # load docker autocomplete
+  eval `docker completion bash 2> /dev/null`
+  # call docker
+  docker "$@"
+}
+
 ################################################################################
 #                            LANGUAGE INTEGRATIONS                             #
 ################################################################################
@@ -116,10 +125,15 @@ prompt_command() {
     local java_version=$(jenv version-name 2>/dev/null)
     [ "$java_version" != "system" ] && prompt[jenv]='\e[1D\e[105m \e[30m '$java_version'\e[95;49m'
   }
-  # kubernetes via kubectl
+  # kubernetes context
   declare -F | grep -e '-f kubectl' > /dev/null || {
     local kctx=$(kubectl config current-context 2>/dev/null)
     [ -n "$kctx" ] && prompt[kube]='\e[1D\e[106m \e[30m󰠳 '$kctx'\e[96;49m'
+  }
+  # docker context
+  declare -F | grep -e '-f docker' > /dev/null || {
+    local dctx=$(docker context show 2>/dev/null)
+    [ -n "$dctx" -a "$dctx" != "default" ] && prompt[docker]='\e[1D\e[106m \e[30m '$dctx'\e[96;49m'
   }
   # git status
   [[ `git status 2>/dev/null` =~ ^((HEAD detached at)|(On branch))\ ([^[:space:]]+) ]] && {
@@ -129,7 +143,7 @@ prompt_command() {
   }
 
   # construct PS1
-  PS1='\n\e[34m╭──\e[44m'${prompt[ssh]}'\e[34;47m \e[30m\w\e[37;49m'${prompt[jenv]}${prompt[pyenv]}${prompt[nvm]}${prompt[git]}${prompt[kube]}${prompt[job]}${prompt[exit]}'\n\e[34m│\e[0m  \n\[\e[34m\]╰─▶ \[\e[0m\]'
+  PS1='\n\e[34m╭──\e[44m'${prompt[ssh]}'\e[34;47m \e[30m\w\e[37;49m'${prompt[jenv]}${prompt[pyenv]}${prompt[nvm]}${prompt[git]}${prompt[docker]}${prompt[kube]}${prompt[job]}${prompt[exit]}'\n\e[34m│\e[0m  \n\[\e[34m\]╰─▶ \[\e[0m\]'
 
   # reset exit value
   return $exit
