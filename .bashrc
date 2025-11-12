@@ -2,8 +2,8 @@
 #                                 ENVIRONMENT                                  #
 ################################################################################
 
-# personal binaries
-export PATH=$PATH:$HOME/.local/bin
+# expand PATH to include user's private bin if not already present
+[[ ":$PATH:" != *":$HOME/.local/bin:"* ]] && export PATH="$HOME/.local/bin:$PATH"
 
 # standard editor is (neo)vim
 export EDITOR=nvim
@@ -13,12 +13,11 @@ export MANWIDTH=80
 export MANPAGER="sh -c 'col -bx | bat -p -lman'"
 export BAT_THEME="Solarized (dark)"
 
-# hide ugly python virtual environmnet prefix (handled in prompt_command)
-export VIRTUAL_ENV_DISABLE_PROMPT=1
+################################################################################
+#                                   TOOLING                                    #
+################################################################################
 
-################################################################################
-#                              TOOL INTEGRATIONS                               #
-################################################################################
+################################ kubernernetes #################################
 
 kubectl() {
   # remove kubectl function
@@ -29,6 +28,8 @@ kubectl() {
   kubectl "$@"
 }
 
+#################################### docker ####################################
+
 docker() {
   # remove docker function
   unset -f docker
@@ -38,13 +39,8 @@ docker() {
   docker "$@"
 }
 
-################################################################################
-#                            LANGUAGE INTEGRATIONS                             #
-################################################################################
-
 ##################################### java ##################################### 
 
-# load jenv only when necessary
 jenv() {
   # remove jenv function
   unset -f jenv
@@ -59,8 +55,9 @@ jenv() {
 ################################### python #####################################
 
 export PYENV_ROOT="$HOME/.pyenv"
+# hide ugly python virtual environmnet prefix (handled in prompt_command)
+export VIRTUAL_ENV_DISABLE_PROMPT=1
 
-# load pyenv only when necessary
 pyenv() {
   # remove pyenv function
   unset -f pyenv
@@ -78,7 +75,6 @@ pyenv() {
 
 export NVM_DIR="$HOME/.nvm"
 
-# load nvm only when necessary
 nvm() {
   # remove nvm function
   unset -f nvm
@@ -208,7 +204,7 @@ alias .....='cd ../../../..'
 alias bc='bc -q -l ~/.config/bc/lib'
 
 ################################################################################
-#                                  FUNCTIONS                                   #
+#                                   HELPERS                                    #
 ################################################################################
 
 get_aws_creds() {
