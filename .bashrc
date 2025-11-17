@@ -17,13 +17,24 @@ export BAT_THEME="Solarized (dark)"
 #                                   TOOLING                                    #
 ################################################################################
 
+##################################### aws ######################################
+
+aws() {
+  # remove aws function
+  unset -f aws
+  # load aws autocomplete
+  complete -C 'aws_completer' aws 2> /dev/null
+  # call aws
+  aws "$@"
+}
+
 ################################ kubernernetes #################################
 
 kubectl() {
   # remove kubectl function
   unset -f kubectl
   # load kubectl autocomplete
-  eval `kubectl completion bash 2> /dev/null`
+  eval "$(kubectl completion bash 2> /dev/null)"
   # call kubectl
   kubectl "$@"
 }
@@ -34,7 +45,7 @@ docker() {
   # remove docker function
   unset -f docker
   # load docker autocomplete
-  eval `docker completion bash 2> /dev/null`
+  eval "$(docker completion bash 2> /dev/null)"
   # call docker
   docker "$@"
 }
@@ -109,7 +120,7 @@ prompt_command() {
   # exit status of last command
   [ $exit -ne 0 ] && prompt[exit]='\e[1D\e[101m \e[30m✗ '$exit'\e[91;49m'
   # background jobs
-  [ `jobs | wc -l` -gt 0 ] && prompt[job]='\e[1D\e[103m \e[30m '`jobs | wc -l | tr -d " \t"`'\e[93;49m'
+  [ "$(jobs | wc -l)" -gt 0 ] && prompt[job]='\e[1D\e[103m \e[30m '$(jobs | wc -l | tr -d " \t")'\e[93;49m'
   # node.js version
   [ -n "$NVM_BIN" ] && prompt[nvm]='\e[1D\e[105m \e[30m󰎙 '${NVM_BIN//@(*\/node\/|\/bin)/}'\e[95;49m'
   # python via pyenv
@@ -122,24 +133,34 @@ prompt_command() {
     [ "$java_version" != "system" ] && prompt[jenv]='\e[1D\e[105m \e[30m '$java_version'\e[95;49m'
   }
   # kubernetes context
-  declare -F | grep -e '-f kubectl' > /dev/null || {
+  declare -F | grep -qe '-f kubectl' || {
     local kctx=$(kubectl config current-context 2>/dev/null)
     [ -n "$kctx" ] && prompt[kube]='\e[1D\e[106m \e[30m󰠳 '$kctx'\e[96;49m'
   }
   # docker context
-  declare -F | grep -e '-f docker' > /dev/null || {
+  declare -F | grep -qe '-f docker' || {
     local dctx=$(docker context show 2>/dev/null)
     [ -n "$dctx" -a "$dctx" != "default" ] && prompt[docker]='\e[1D\e[106m \e[30m '$dctx'\e[96;49m'
   }
+  # aws info
+  [ -z "$AWS_ARN" -a -z "$(declare -F | grep -e '-f aws')" ] && {
+    AWS_ARN=$(aws sts get-caller-identity --query Arn --output text 2>/dev/null || echo "-")
+  }
+  [[ "$AWS_ARN" =~ ^(arn:[^:]+:[^:]+:[^:]*:[0-9]*:)?((assumed-role/([^/]+)/([^/]+))|(user/([^/]+)))$ ]] && {
+    #               ╰───────────── 1 ─────────────╯ ││             ╰─ 4 ─╯ ╰─ 5 ─╯│ │     ╰─ 7 ─╯││
+    # BASH_REMATCH indices                          │╰───────────── 3 ────────────╯ ╰───── 6 ────╯│
+    #                                               ╰───────────────────── 2 ─────────────────────╯ 
+    prompt[aws]="\e[1D\e[106m \e[30m󰅟 ${BASH_REMATCH[4]}${BASH_REMATCH[4]:+/}${BASH_REMATCH[5]}${BASH_REMATCH[6]}\e[96;49m"
+  }
   # git status
-  [[ `git status 2>/dev/null` =~ ^((HEAD detached at)|(On branch))\ ([^[:space:]]+) ]] && {
-  # match group nunmbers for the  │╰─────── 2 ──────╯ ╰─── 3 ───╯│  ╰───── 4 ─────╯
-  # BASH_REMATCH variable         ╰────────────── 1 ─────────────╯
+  [[ "$(git status 2>/dev/null)" =~ ^((HEAD detached at)|(On branch))\ ([^[:space:]]+) ]] && {
+    # BASH_REMATCH indices           │╰─────── 2 ──────╯ ╰─── 3 ───╯│  ╰───── 4 ─────╯
+    #                                ╰────────────── 1 ─────────────╯
     prompt[git]="\e[1D\e[102m \e[30m${BASH_REMATCH[2]:+󰜛}${BASH_REMATCH[3]:+󰘬} ${BASH_REMATCH[4]}\e[92;49m"
   }
 
   # construct PS1
-  PS1='\n\e[34m╭──\e[44m'${prompt[ssh]}'\e[34;47m \e[30m\w\e[37;49m'${prompt[jenv]}${prompt[pyenv]}${prompt[nvm]}${prompt[git]}${prompt[docker]}${prompt[kube]}${prompt[job]}${prompt[exit]}'\n\e[34m│\e[0m  \n\[\e[34m\]╰─▶ \[\e[0m\]'
+  PS1='\n\e[34m╭──\e[44m'${prompt[ssh]}'\e[34;47m \e[30m\w\e[37;49m'${prompt[jenv]}${prompt[pyenv]}${prompt[nvm]}${prompt[git]}${prompt[aws]}${prompt[docker]}${prompt[kube]}${prompt[job]}${prompt[exit]}'\n\e[34m│\e[0m  \n\[\e[34m\]╰─▶ \[\e[0m\]'
 
   # reset exit value
   return $exit
@@ -211,11 +232,9 @@ get_aws_creds() {
   [ -z "$1" ] && {
     read -p 'MFA Token Code: ' MFA_CODE
   }
-  MFA_ARN='arn:aws:iam::059308602976:mfa/SamsungGalaxyS10'
-
   cat \
     <(sed -n '/\[mfa\]/q;p' "$HOME/.aws/credentials") \
-    <(aws sts get-session-token --serial-number "$MFA_ARN" --token-code "${1:-$MFA_CODE}" \
+    <(aws sts get-session-token --serial-number "$(aws configure get mfa_serial)" --token-code "${1:-$MFA_CODE}" \
       | jq -r '.Credentials | "[mfa]\naws_access_key_id = \(.AccessKeyId)\naws_secret_access_key = \(.SecretAccessKey)\naws_session_token = \(.SessionToken)\n"' \
       | sed 's/\\n/\n/g'
     ) | tee "$HOME/.aws/new_credentials"
@@ -223,6 +242,7 @@ get_aws_creds() {
   [ -s "$HOME/.aws/new_credentials" ] && {
     mv -i "$HOME/.aws/new_credentials" "$HOME/.aws/credentials"
   }
+  export AWS_ARN=$(aws sts get-caller-identity --query Arn --output text 2>/dev/null)
 }
 
 mkcd() {
@@ -232,21 +252,21 @@ mkcd() {
 colortest() {
   echo
   # standard 16 colors
-  for i in `seq 0 15`; do
+  for i in $(seq 0 15); do
     echo -en "\e[38;5;"$i"m██"
     [ "$(( (i + 1) % 8   ))" -eq 0 ] && echo
   done
   echo
 
   # grayscale ramp
-  for i in `seq 232 255`; do
+  for i in $(seq 232 255); do
     echo -en "\e[38;5;"$i"m██"
     #[ "$(( (i - 231) % 4 ))" -eq 0 ] && echo
   done
   echo ; echo
 
   # 6x6x6 color cube
-  for i in `seq 16 231`; do
+  for i in $(seq 16 231); do
     echo -en "\e[38;5;"$i"m██"
     [ "$(( (i - 15) % 36 ))" -eq 0 ] && echo
   done
