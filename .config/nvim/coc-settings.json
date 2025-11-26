@@ -57,10 +57,30 @@
     "javascriptreact"
   ],
 
+  "pyright.inlayHints": {
+    "functionReturnTypes": false,
+    "variableTypes": false,
+    "parameterTypes": false
+  },
+
   "prettier": {
     "singleQuote": true,
     "printWidth": 80
   },
 
-  "yaml.schemaStore.enable": true
+  "yaml.schemaStore.enable": true,
+
+	"languageserver": {
+		"terraform": {
+			"command": "terraform-lsp",
+			"filetypes": [ "terraform" ]
+		},
+    "bash": {
+      "command": "bash-language-server",
+      "args": ["start"],
+      "filetypes": ["sh"],
+      "ignoredRootPaths": ["~"],
+      "rootPatterns": [".git/", "shellcheckrc", ".envrc"]
+    }
+	}
 }
