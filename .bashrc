@@ -146,11 +146,11 @@ prompt_command() {
   [ -z "$AWS_ARN" -a -z "$(declare -F | grep -e '-f aws')" ] && {
     AWS_ARN=$(aws sts get-caller-identity --query Arn --output text 2>/dev/null || echo "-")
   }
-  [[ "$AWS_ARN" =~ ^(arn:[^:]+:[^:]+:[^:]*:[0-9]*:)?((assumed-role/([^/]+)/([^/]+))|(user/([^/]+)))$ ]] && {
-    #               ╰───────────── 1 ─────────────╯ ││             ╰─ 4 ─╯ ╰─ 5 ─╯│ │     ╰─ 7 ─╯││
-    # BASH_REMATCH indices                          │╰───────────── 3 ────────────╯ ╰───── 6 ────╯│
-    #                                               ╰───────────────────── 2 ─────────────────────╯ 
-    prompt[aws]="\e[1D\e[106m \e[30m󰅟 ${BASH_REMATCH[4]}${BASH_REMATCH[4]:+/}${BASH_REMATCH[5]}${BASH_REMATCH[6]}\e[96;49m"
+  [[ "$AWS_ARN" =~ ^(arn:[^:]+:[^:]+:[^:]*:[0-9]*:)?((assumed-role/([^/]+)_([^/]+)_([^/]+)/([^/]+))|(user/([^/]+)))$ ]] && {
+    #               ╰───────────── 1 ─────────────╯ ││             ╰─ 4 ─╯ ╰─ 5 ─╯ ╰─ 6 ─╯ ╰─ 7 ─╯│ │     ╰─ 9 ─╯││
+    # BASH_REMATCH indices                          │╰───────────────────── 3 ────────────────────╯ ╰───── 8 ────╯│
+    #                                               ╰───────────────────────────── 2 ─────────────────────────────╯
+    prompt[aws]="\e[1D\e[106m \e[30m󰅟 ${BASH_REMATCH[5]}${BASH_REMATCH[5]:+/}${BASH_REMATCH[7]}${BASH_REMATCH[8]}\e[96;49m"
   }
   # git status
   [[ "$(git status 2>/dev/null)" =~ ^((HEAD detached at)|(On branch))\ ([^[:space:]]+) ]] && {
