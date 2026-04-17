@@ -14,52 +14,54 @@ export MANPAGER="sh -c 'col -bx | bat -p -lman'"
 export BAT_THEME="Solarized (dark)"
 
 ################################################################################
+#                                                                              #
 #                                   TOOLING                                    #
+#                                                                              #
+# Lazy-loading tooling always follows the same pattern: Create a function that #
+# deletes itself and then loads completions and other initializations only if  #
+# needed                                                                       #
+#                                                                              #
+# tool() {                                                                     #
+#   # delete wrapper function                                                  #
+#   unset -f tool                                                              #
+#   # load completion and other bootstrapping                                  #
+#   complete -C "$(call completion script)"                                    #
+#   # call actual tool passing all arguments                                   #
+#   tool "$@"                                                                  #
+# }                                                                            #
+#                                                                              #
 ################################################################################
 
 ##################################### aws ######################################
 
 aws() {
-  # remove aws function
   unset -f aws
-  # load aws autocomplete
   complete -C 'aws_completer' aws 2> /dev/null
-  # call aws
   aws "$@"
 }
 
 ################################ kubernernetes #################################
 
 kubectl() {
-  # remove kubectl function
   unset -f kubectl
-  # load kubectl autocomplete
   eval "$(kubectl completion bash 2> /dev/null)"
-  # call kubectl
   kubectl "$@"
 }
 
 #################################### docker ####################################
 
 docker() {
-  # remove docker function
   unset -f docker
-  # load docker autocomplete
   eval "$(docker completion bash 2> /dev/null)"
-  # call docker
   docker "$@"
 }
 
 ##################################### java #####################################
 
 jenv() {
-  # remove jenv function
   unset -f jenv
-  # load jenv
   [ -r "$HOME/.jenv/bin/jenv" ] && export PATH="$HOME/.jenv/bin:$PATH"
-  # load jenv shims
   [ -r "$HOME/.jenv/bin/jenv" ] && eval "$(jenv init -)"
-  # call jenv
   jenv "$@"
 }
 
@@ -70,15 +72,12 @@ export PYENV_ROOT="$HOME/.pyenv"
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 
 pyenv() {
-  # remove pyenv function
   unset -f pyenv
-  # load pyenv
   [ -r "$PYENV_ROOT/bin/pyenv" ] && {
     export PATH="$PYENV_ROOT/bin:$PATH"
     eval "$(pyenv init -)"
     eval "$(pyenv virtualenv-init -)"
   }
-  # call pyenv
   pyenv "$@"
 }
 
@@ -87,15 +86,10 @@ pyenv() {
 export NVM_DIR="$HOME/.nvm"
 
 nvm() {
-  # remove nvm function
   unset -f nvm
-  # load nvm
   [ -r "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-  # load bash_completion
   [ -r "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
-  # load bash completion for npm
   type npm &> /dev/null && source <(npm completion)
-  # call nvm
   nvm "$@"
 }
 
