@@ -1,64 +1,112 @@
 ################################################################################
-#                                 ENVIRONMENT                                  # 
+#                                 ENVIRONMENT                                  #
 ################################################################################
 
-# personal binaries
-export PATH=$PATH:$HOME/.local/bin
+# expand PATH to include user's private bin if not already present
+[[ ":$PATH:" != *":$HOME/.local/bin:"* ]] && export PATH="$HOME/.local/bin:$PATH"
 
 # standard editor is (neo)vim
 export EDITOR=nvim
 
-# fancy man-pages
+# readable man-pages
 export MANWIDTH=80
-#export MANPAGER="sh -c 'col -bx | bat -p -lman'"
-export BAT_THEME="Solarized (dark)"
+export GROFF_NO_SGR=1
 
-################################### android ####################################
+# colorful man-pages
+export LESS_TERMCAP_mb=$'\e[1;34m'   # bold
+export LESS_TERMCAP_md=$'\e[1;34m'   # blinking
+export LESS_TERMCAP_me=$'\e[0m'
+export LESS_TERMCAP_us=$'\e[4;33m'   # underline
+export LESS_TERMCAP_ue=$'\e[0m'
+export LESS_TERMCAP_so=$'\e[30;47m'   # standout (search / sections)
+export LESS_TERMCAP_se=$'\e[0m'
 
-export ANDROID_SDK_ROOT=$HOME/Android/Sdk
-export PATH=$PATH:$ANDROID_SDK_ROOT/tools/bin
-export PATH=$PATH:$ANDROID_SDK_ROOT/build-tools 
-export PATH=$PATH:$ANDROID_SDK_ROOT/platform-tools
-export PATH=$PATH:$ANDROID_SDK_ROOT/emulator
+################################################################################
+#                                                                              #
+#                                   TOOLING                                    #
+#                                                                              #
+# Lazy-loading tooling always follows the same pattern: Create a function that #
+# deletes itself and then loads completions and other initializations only if  #
+# needed                                                                       #
+#                                                                              #
+# tool() {                                                                     #
+#   # delete wrapper function                                                  #
+#   unset -f tool                                                              #
+#   # load completion and other bootstrapping                                  #
+#   complete -C "$(call completion script)"                                    #
+#   # call actual tool passing all arguments                                   #
+#   tool "$@"                                                                  #
+# }                                                                            #
+#                                                                              #
+################################################################################
+
+##################################### aws ######################################
+
+aws() {
+  unset -f aws
+  complete -C 'aws_completer' aws 2> /dev/null
+  aws "$@"
+}
+
+################################ kubernernetes #################################
+
+kubectl() {
+  unset -f kubectl
+  eval "$(kubectl completion bash 2> /dev/null)"
+  kubectl "$@"
+}
+
+#################################### docker ####################################
+
+docker() {
+  unset -f docker
+  eval "$(docker completion bash 2> /dev/null)"
+  docker "$@"
+}
+
+##################################### java #####################################
+
+jenv() {
+  unset -f jenv
+  [ -r "$HOME/.jenv/bin/jenv" ] && export PATH="$HOME/.jenv/bin:$PATH"
+  [ -r "$HOME/.jenv/bin/jenv" ] && eval "$(jenv init -)"
+  jenv "$@"
+}
 
 ################################### python #####################################
 
-# pyenv
-export PATH=$HOME/.pyenv/bin:$PATH
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-
-# include python virtual environments within project
-export PIPENV_VENV_IN_PROJECT=1
-
+export PYENV_ROOT="$HOME/.pyenv"
 # hide ugly python virtual environmnet prefix (handled in prompt_command)
 export VIRTUAL_ENV_DISABLE_PROMPT=1
+
+pyenv() {
+  unset -f pyenv
+  [ -r "$PYENV_ROOT/bin/pyenv" ] && {
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
+  }
+  pyenv "$@"
+}
 
 ################################### node.js ####################################
 
 export NVM_DIR="$HOME/.nvm"
 
-# load nvm only when necessary
 nvm() {
-  # remove nvm function
   unset -f nvm
-  # load nvm
   [ -r "$NVM_DIR/nvm.sh" ] && source "$NVM_DIR/nvm.sh"
-  # load bash_completion
   [ -r "$NVM_DIR/bash_completion" ] && source "$NVM_DIR/bash_completion"
-  # call nvm
-  nvm "$@"
-  # load bash completion for npm
   type npm &> /dev/null && source <(npm completion)
+  nvm "$@"
 }
-
 
 ################################################################################
 #                                    PROMPT                                    #
 ################################################################################
 
-# only show 3 folders in prompt path
-export PROMPT_DIRTRIM=3
+# only show 2 folders in prompt path
+export PROMPT_DIRTRIM=2
 
 # the function contained in PROMPT_COMMAND constructs PS1
 export PROMPT_COMMAND='prompt_command'
@@ -69,45 +117,63 @@ prompt_command() {
 
   # construct potential additions
   declare -A prompt
-  # background jobs
-  [ `jobs | wc -l` -gt 0 ] && prompt[job]=' \e[31;1mjobs:'`jobs | wc -l`'\e[0m'
   # ssh remote host
-  [ -n "$SSH_TTY" ] && prompt[ssh]='\e[37;1m@\e[36;1m\h\e[0m'
+  [ -n "$SSH_TTY" ] && prompt[ssh]='\e[30m\u@\h' || { prompt[ssh]='\e[30m\u'; }
+  # exit status of last command
+  [ $exit -ne 0 ] && prompt[exit]='\e[1D\e[101m \e[30m✗ '$exit'\e[91;49m'
+  # background jobs
+  [ "$(jobs | wc -l)" -gt 0 ] && prompt[job]='\e[1D\e[103m \e[30m '$(jobs | wc -l | tr -d " \t")'\e[93;49m'
   # node.js version
-  [ -n "$NVM_BIN" ] && prompt[nvm]=' \e[35;1mnvm:'${NVM_BIN//@(*\/node\/|\/bin)/}'\e[0m'
-  # python virtual environment
-  [ -n "$VIRTUAL_ENV" ] && {
-    prompt[pve]=' \e[35;1mpve:'`basename $VIRTUAL_ENV`'\e[0m'
-  } || {
-    unset prompt[pve]
+  [ -n "$NVM_BIN" ] && prompt[nvm]='\e[1D\e[105m \e[30m󰎙 '${NVM_BIN//@(*\/node\/|\/bin)/}'\e[95;49m'
+  # python via pyenv
+  [ -n "$PYENV_VERSION" ] && {
+    prompt[pyenv]='\e[1D\e[105m \e[30m '$PYENV_VERSION'\e[95;49m'
+  }
+  # java via jenv
+  [ -n "$JENV_LOADED" ] && {
+    local java_version=$(jenv version-name 2>/dev/null)
+    [ "$java_version" != "system" ] && prompt[jenv]='\e[1D\e[105m \e[30m '$java_version'\e[95;49m'
+  }
+  # kubernetes context
+  declare -F | grep -qe '-f kubectl' || {
+    local kctx=$(kubectl config current-context 2>/dev/null)
+    [ -n "$kctx" ] && prompt[kube]='\e[1D\e[106m \e[30m󰠳 '$kctx'\e[96;49m'
+  }
+  # docker context
+  declare -F | grep -qe '-f docker' || {
+    local dctx=$(docker context show 2>/dev/null)
+    [ -n "$dctx" -a "$dctx" != "default" ] && prompt[docker]='\e[1D\e[106m \e[30m '$dctx'\e[96;49m'
+  }
+  # aws info
+  [ -z "$AWS_ARN" -a -z "$(declare -F | grep -e '-f aws')" ] && {
+    AWS_ARN=$(aws sts get-caller-identity --query Arn --output text 2>/dev/null || echo "-")
+  }
+  [[ "$AWS_ARN" =~ ^(arn:[^:]+:[^:]+:[^:]*:[0-9]*:)?((assumed-role/([^/]+)_([^/]+)_([^/]+)/([^/]+))|(user/([^/]+)))$ ]] && {
+    #               ╰───────────── 1 ─────────────╯ ││             ╰─ 4 ─╯ ╰─ 5 ─╯ ╰─ 6 ─╯ ╰─ 7 ─╯│ │     ╰─ 9 ─╯││
+    # BASH_REMATCH indices                          │╰───────────────────── 3 ────────────────────╯ ╰───── 8 ────╯│
+    #                                               ╰───────────────────────────── 2 ─────────────────────────────╯
+    prompt[aws]="\e[1D\e[106m \e[30m󰅟 ${BASH_REMATCH[5]}${BASH_REMATCH[5]:+/}${BASH_REMATCH[7]}${BASH_REMATCH[8]}\e[96;49m"
   }
   # git status
-  [ -r /usr/share/git/git-prompt.sh ] && {
-    source /usr/share/git/git-prompt.sh
-    export GIT_PS1_SHOWDIRTYSTATE=true
-    export GIT_PS1_SHOWSTASHSTATE=true
-    export GIT_PS1_SHOWUPSTREAM="auto"
-    #export GIT_PS1_SHOWCOLORHINTS=true
-    #export GIT_PS1_SHOWUNTRACKEDFILES=true
-    export GIT_PS1_STATESEPARATOR=":"
-    #export GIT_PS1_DESCRIBE_STYLE="default"
-    #export GIT_PS1_HIDE_IF_PWD_IGNORED=true
-    prompt[git]=' \e[32;1m'`__git_ps1 "git:%s"`'\e[0m'
+  [[ "$(git status 2>/dev/null)" =~ ^((HEAD detached at)|(On branch))\ ([^[:space:]]+) ]] && {
+    # BASH_REMATCH indices           │╰─────── 2 ──────╯ ╰─── 3 ───╯│  ╰───── 4 ─────╯
+    #                                ╰────────────── 1 ─────────────╯
+    prompt[git]="\e[1D\e[102m \e[30m${BASH_REMATCH[2]:+󰜛}${BASH_REMATCH[3]:+󰘬} ${BASH_REMATCH[4]}\e[92;49m"
   }
 
   # construct PS1
-  PS1='┌┤ \e[32;1m\u'${prompt[ssh]}' \e[37;1m\w\e[0m │'${prompt[job]}${prompt[pve]}${prompt[nvm]}${prompt[git]}'\n└▶ '
+  PS1='\n\e[34m╭──\e[44m'${prompt[ssh]}'\e[34;47m \e[30m\w\e[37;49m'${prompt[jenv]}${prompt[pyenv]}${prompt[nvm]}${prompt[git]}${prompt[aws]}${prompt[docker]}${prompt[kube]}${prompt[job]}${prompt[exit]}'\n\e[34m│\e[0m  \n\[\e[34m\]╰─▶ \[\e[0m\]'
 
   # reset exit value
   return $exit
 }
 
 # secondary prompt
-PS2='\e[1A│ \e[1B\e[2D└▶ '
+PS2='\[\e[1A\e[34m│ \e[37m▷\[\e[1B\e[3D\e[34m\]╰─▶ \[\e[0m\]'
 
-################################### bindings ################################### 
+################################### bindings ###################################
 
-# use vi key bindings
+# select vi key bindings
 set -o vi
 
 # bind Ctrl-l to clear screen in vi mode
@@ -154,39 +220,56 @@ alias ln='ln -i'
 # fast folder climbing
 alias ..='cd ..'
 alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
 
 # start bc with the mathlib and personal augmentations
 alias bc='bc -q -l ~/.config/bc/lib'
 
-# use the urxvt client/server support (see EXIT STATUS in urxvtc(1))
-alias urxvt='urxvtcd'
-
-# ncmpc with color by default
-alias ncmpc='ncmpc -c'
-
-# load .tmux.conf from $XDG_CONFIG_HOME/tmux
-alias tmux='tmux -f ~/.config/tmux/config'
-
 ################################################################################
-#                                  COMPLETION                                  # 
+#                                   HELPERS                                    #
 ################################################################################
 
-##################################### git ###################################### 
+get_aws_creds() {
+  [ -z "$1" ] && {
+    read -p 'MFA Token Code: ' MFA_CODE
+  }
+  cat \
+    <(sed -n '/\[mfa\]/q;p' "$HOME/.aws/credentials") \
+    <(aws sts get-session-token --serial-number "$(aws configure get mfa_serial)" --token-code "${1:-$MFA_CODE}" \
+      | jq -r '.Credentials | "[mfa]\naws_access_key_id = \(.AccessKeyId)\naws_secret_access_key = \(.SecretAccessKey)\naws_session_token = \(.SessionToken)\n"' \
+      | sed 's/\\n/\n/g'
+    ) | tee "$HOME/.aws/new_credentials"
 
-[ -r /usr/share/git/completion/git-completion.bash ] && {
-  source /usr/share/git/completion/git-completion.bash
-}
-# also for dotfiles alias
-eval `complete -p git | sed 's/\w*$//'` dotfiles
-
-################################## terraform ################################### 
-
-[ -r /usr/bin/terraform ] && {
-  complete -C /usr/bin/terraform terraform
+  [ -s "$HOME/.aws/new_credentials" ] && {
+    mv -i "$HOME/.aws/new_credentials" "$HOME/.aws/credentials"
+  }
+  export AWS_ARN=$(aws sts get-caller-identity --query Arn --output text 2>/dev/null)
 }
 
-################################################################################
-#                                  EYE CANDY                                   #
-################################################################################
+mkcd() {
+  mkdir "$1" && cd "$1"
+}
 
-eval `dircolors ~/.config/dircolors/config`
+colortest() {
+  echo
+  # standard 16 colors
+  for i in $(seq 0 15); do
+    echo -en "\e[38;5;"$i"m██"
+    [ "$(( (i + 1) % 8   ))" -eq 0 ] && echo
+  done
+  echo
+
+  # grayscale ramp
+  for i in $(seq 232 255); do
+    echo -en "\e[38;5;"$i"m██"
+    #[ "$(( (i - 231) % 4 ))" -eq 0 ] && echo
+  done
+  echo ; echo
+
+  # 6x6x6 color cube
+  for i in $(seq 16 231); do
+    echo -en "\e[38;5;"$i"m██"
+    [ "$(( (i - 15) % 36 ))" -eq 0 ] && echo
+  done
+}
