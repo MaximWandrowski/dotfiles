@@ -21,6 +21,9 @@ export LESS_TERMCAP_ue=$'\e[0m'
 export LESS_TERMCAP_so=$'\e[30;47m'   # standout (search / sections)
 export LESS_TERMCAP_se=$'\e[0m'
 
+# fix dircolors for Selenized
+export LS_COLORS="$LS_COLORS:ow=1;7;34:st=30;44:su=30;41"
+
 ################################################################################
 #                                                                              #
 #                                   TOOLING                                    #
