@@ -10,7 +10,6 @@
     "markdown",
     "md"
   ],
-
   "suggest.floatEnable": true,
   "suggest.completionItemKindLabels": {
     "keyword": "\uf1de",
@@ -39,7 +38,6 @@
     "typeParameter": "\uf728",
     "default": "\uf29c"
   },
-
   "diagnostic": {
     // ● • ★ ✗ ⚠ ℹ ▶
     "hintSign": "●",
@@ -48,7 +46,6 @@
     "infoSign": "●",
     "checkCurrentLine": true
   },
-
   "eslint.filetypes": [
     "javascript",
     "json",
@@ -56,11 +53,39 @@
     "typescriptreact",
     "javascriptreact"
   ],
-
+  "pyright.inlayHints": {
+    "functionReturnTypes": false,
+    "variableTypes": false,
+    "parameterTypes": false
+  },
   "prettier": {
     "singleQuote": true,
     "printWidth": 80
   },
-
-  "yaml.schemaStore.enable": true
+  "yaml.schemaStore.enable": true,
+  "languageserver": {
+    "terraform": {
+      "command": "terraform-lsp",
+      "filetypes": [
+        "terraform"
+      ]
+    },
+    "bash": {
+      "command": "bash-language-server",
+      "args": [
+        "start"
+      ],
+      "filetypes": [
+        "sh"
+      ],
+      "ignoredRootPaths": [
+        "~"
+      ],
+      "rootPatterns": [
+        ".git/",
+        "shellcheckrc",
+        ".envrc"
+      ]
+    }
+  }
 }
