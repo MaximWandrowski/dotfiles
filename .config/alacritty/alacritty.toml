@@ -1,0 +1,35 @@
+[general]
+live_config_reload = true
+import = [
+  "~/.config/alacritty/selenized_light.toml"
+]
+
+[colors.cursor]
+cursor = "CellForeground"
+text = "CellBackground"
+
+[env]
+TERM = "alacritty"
+
+[font]
+size = 9.0
+
+[font.bold]
+family = "DejaVuSansM Nerd Font Mono"
+style = "Bold"
+
+[font.bold_italic]
+family = "DejaVuSansM Nerd Font Mono"
+style = "Bold Oblique"
+
+[font.italic]
+family = "DejaVuSansM Nerd Font Mono"
+style = "Oblique"
+
+[font.normal]
+family = "DejaVuSansM Nerd Font Mono"
+style = "Book"
+
+[mouse]
+hide_when_typing = true
+

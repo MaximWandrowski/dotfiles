@@ -4,19 +4,35 @@
 
 if has('termguicolors')
   set termguicolors
+else
+  set t_Co=16
 endif
 
+colorscheme selenized_bw
+
 function ToggleBackground()
-  if(w:solarized_style=="dark")
-    let w:solarized_style="light"
+  if &background ==# 'dark'
+    set background=light
   else
-    let w:solarized_style="dark"
+    set background=dark
   endif
-  colorscheme solarized
 endfunction
 
-set background=dark
-colorscheme solarized
+function ToggleColorscheme()
+  if g:colors_name ==# 'selenized'
+    colorscheme selenized_bw
+  else
+    colorscheme selenized
+  endif
+endfunction
+
+let mode = trim(system('darkman get'))
+
+if mode ==# 'dark'
+    set background=dark
+elseif mode ==# 'light'
+    set background=light
+endif
 
 set mouse=a
 set colorcolumn=+1
@@ -26,6 +42,7 @@ set ruler
 set showcmd
 set cursorline
 set incsearch
+set nowrap
 
 set splitright
 set splitbelow
@@ -110,10 +127,15 @@ Plug 'tpope/vim-fugitive'
 
 " highlight color descriptions
 Plug 'norcalli/nvim-colorizer.lua'
+
+" Terraform
+Plug 'hashivim/vim-terraform'
+
+" Copilot
+Plug 'github/copilot.vim'
 call plug#end()
 
 " vim-html-template-literals
-let g:htl_all_templates=1
 
 " nerdtree
 let g:NERDTreeMinimalUI = 1
@@ -121,17 +143,27 @@ let g:NERDTreeMinimalUI = 1
 " nvim-colorizer.lua
 lua require'colorizer'.setup()
 
+" vim-devicons
+let g:WebDevIconsUnicodeDecorateFileNodesPatternSymbols = {} " needed
+let g:WebDevIconsUnicodeDecorateFileNodesPatternSymbols['.*\.tf\(vars\|state\|\.json\)*$'] = '󱁢'
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "                                   MAPPINGS                                   "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+nnoremap <C-h> 2zh
+nnoremap <C-l> 2zl
+nnoremap <C-j> <C-e>
+nnoremap <C-k> <C-y>
+
+"""""""""""""""""""""""""""""""""""" leader """"""""""""""""""""""""""""""""""""
+
 let mapleader=";"
-
-""""""""""""""""""""""""""""""""""" personal """""""""""""""""""""""""""""""""""
-
+nmap <leader>w  :set wrap!<cr>
 nmap <leader>b  :call ToggleBackground()<cr>
+nmap <leader>B  :call ToggleColorscheme()<cr>
 nmap <leader>e  :exec':tabnew '.stdpath('config').'/init.vim'<cr>
-nmap <leader>r  :exec':source '.stdpath('config').'/init.vim'<cr>
+nmap <leader>R  :exec':source '.stdpath('config').'/init.vim'<cr>
 nmap <leader>n  :set relativenumber!<cr>
 nmap <leader>N  :set number!<cr>
 nmap <leader>h  :set nohls!<cr>
@@ -140,11 +172,39 @@ nmap <leader>cl :set cursorline!<cr>
 nmap <leader>cc :set cursorcolumn!<cr>
 nmap <leader>f  :NERDTreeToggle<cr>
 nmap <leader>p  :CocCommand prettier.formatFile<cr>
+nmap <leader>C  :Copilot toggle<cr>
 
 """"""""""""""""""""""""""""""""""" coc.nvim """""""""""""""""""""""""""""""""""
 
 " NOTE: mappings taken from
 " https://github.com/neoclide/coc.nvim/blob/release/Readme.md
+
+" Use <c-space> to trigger completion
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+" Use tab for trigger completion with characters ahead and navigate
+" NOTE: There's always complete item selected by default, you may want to enable
+" no select by `"suggest.noselect": true` in your configuration file
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+" Make <CR> to accept selected completion item or notify coc.nvim to format
+" <C-g>u breaks current undo, please make your own choice
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
 
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
@@ -180,6 +240,14 @@ xmap ic <Plug>(coc-classobj-i)
 omap ic <Plug>(coc-classobj-i)
 xmap ac <Plug>(coc-classobj-a)
 omap ac <Plug>(coc-classobj-a)
+
+" Symbol renaming
+nmap <leader>rn <Plug>(coc-rename)
+
+" Remap keys for applying refactor code actions
+nmap <silent> <leader>re <Plug>(coc-codeaction-refactor)
+xmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
+nmap <silent> <leader>r  <Plug>(coc-codeaction-refactor-selected)
 
 " Remap <C-f> and <C-b> for scroll float windows/popups.
 " Note coc#float#scroll works on neovim >= 0.4.0 or vim >= 8.2.0750
