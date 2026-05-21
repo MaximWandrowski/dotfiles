@@ -17,7 +17,7 @@ window {
   border: 1px solid #4e4e4e;
   border-radius: 5px 5px 0 0;
   color: #8a8a8a;
-  background-color: rgba(18,18,18,0.9);
+  background-color: rgba(18, 18, 18, 0.9);
 }
 
 #inner-box {
@@ -28,7 +28,7 @@ window {
   border: 1px solid #4e4e4e;
   border-top: none;
   border-radius: 0 0 5px 5px;
-  background-color: rgba(18,18,18,0.9);
+  background-color: rgba(18, 18, 18, 0.9);
 }
 
 #text {
@@ -42,5 +42,9 @@ window {
 }
 
 #entry:selected {
-  background-color: rgba(0,135,255,0.25);
+  background-color: rgba(0, 135, 255, 0.25);
+}
+
+#img {
+  margin-right: 5px;
 }

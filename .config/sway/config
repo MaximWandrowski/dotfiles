@@ -40,7 +40,7 @@ set $term alacritty
 # Note: pass the final command to swaymsg so that the resulting window can be
 # opened on the original workspace that the command was run on.
 # set $menu dmenu_path | dmenu | xargs swaymsg exec --
-set $menu wofi --show run | xargs swaymsg exec --
+set $menu wofi -p '' -I --show drun | xargs swaymsg exec --
 
 # Thinkpad X230 requires manual setting of Volume and MicMute LED
 set $vol_led \
@@ -55,6 +55,9 @@ set $mic_led \
 # Make sure we don't have to retype the locking command
 set $lock_cmd 'swaylock -f -i ~/Pictures/wallpaper/cholitas.jpg'
 
+# clipboard history via cliphist
+set $cliphist_watch wl-paste --watch cliphist store
+set $cliphist_paste cliphist list | wofi -I --show dmenu | cliphist decode | wl-copy
 
 ################################################################################
 #                                    OUTPUT                                    #
@@ -85,6 +88,8 @@ exec swayidle -w \
   resume 'swaymsg "output * dpms on"' \
   before-sleep $lock_cmd
 
+# Run cliphist
+exec $cliphist_watch
 
 ################################################################################
 #                                    INPUT                                     #
@@ -98,7 +103,7 @@ set $trackpoint '2:10:TPPS/2_IBM_TrackPoint'
 set $touchpad '2:7:SynPS/2_Synaptics_TouchPad'
 
 input $keyboard {
-  xkb_layout gb,de,es
+  xkb_layout gb,de
 }
 
 
@@ -132,6 +137,9 @@ bindsym $mod+Shift+r reload
 
 # Exit sway (logs you out of your Wayland session)
 bindsym $mod+Shift+q exec swaymsg exit
+
+# Paste from clipboard history
+bindsym $mod+c exec $cliphist_paste
 
 ################################### MOVEMENT ################################### 
 
