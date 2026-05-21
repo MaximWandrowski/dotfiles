@@ -53,7 +53,7 @@ set $mic_led \
   light -s sysfs/leds/platform::micmute -S 0
 
 # Make sure we don't have to retype the locking command
-set $lock_cmd 'swaylock -f -i ~/Pictures/wallpaper/cholitas.jpg'
+set $lock_cmd swaylock -f -i ~/Pictures/wallpaper/cholitas.jpg
 
 # clipboard history via cliphist
 set $cliphist_watch wl-paste --watch cliphist store
@@ -261,7 +261,8 @@ bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle && $
 ################################ MISCELLANEOUS ################################# 
 
 bindsym XF86Launch1 exec swaymsg 'input $keyboard xkb_switch_layout next'
-bindsym XF86ScreenSaver exec $lock_cmd
+#bindsym XF86ScreenSaver exec $lock_cmd
+bindcode 160 exec $lock_cmd
 bindsym XF86Sleep exec systemctl suspend
 bindsym XF86PowerOff exec swaynag -t normal -m 'power options' \
   -z ' 󰐥 poweroff ' 'systemctl poweroff' \
