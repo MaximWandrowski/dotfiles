@@ -13,12 +13,12 @@ export MANWIDTH=80
 export GROFF_NO_SGR=1
 
 # colorful man-pages
-export LESS_TERMCAP_mb=$'\e[1;34m'   # bold
-export LESS_TERMCAP_md=$'\e[1;34m'   # blinking
+export LESS_TERMCAP_mb=$'\e[1;34m'  # bold
+export LESS_TERMCAP_md=$'\e[1;34m'  # blinking
 export LESS_TERMCAP_me=$'\e[0m'
-export LESS_TERMCAP_us=$'\e[4;33m'   # underline
+export LESS_TERMCAP_us=$'\e[4;33m'  # underline
 export LESS_TERMCAP_ue=$'\e[0m'
-export LESS_TERMCAP_so=$'\e[30;47m'   # standout (search / sections)
+export LESS_TERMCAP_so=$'\e[30;47m' # standout (search / sections)
 export LESS_TERMCAP_se=$'\e[0m'
 
 # fix dircolors for Selenized
