@@ -53,7 +53,7 @@ set $mic_led \
   light -s sysfs/leds/platform::micmute -S 0
 
 # Make sure we don't have to retype the locking command
-set $lock_cmd swaylock -f -i ~/Pictures/wallpaper/cholitas.jpg
+set $lock_cmd swaylock -f -i ~/Pictures/wallpaper/wallpaper.jpg
 
 # clipboard history via cliphist
 set $cliphist_watch wl-paste --watch cliphist store
@@ -62,11 +62,12 @@ set $cliphist_paste cliphist list | wofi -I --show dmenu | cliphist decode | wl-
 ################################################################################
 #                                    OUTPUT                                    #
 #                                                                              #
-# You can get the names of your inputs by running: swaymsg -t get_outputs      #
+# You can get the names of your outputs by running: swaymsg -t get_outputs     #
 # Read `man 5 sway-output` for more information about this section.            #
 ################################################################################
 
-output * bg ~/Pictures/wallpaper/cholitas.jpg fill
+output * bg ~/Pictures/wallpaper/wallpaper.jpg fill
+output eDP-1 scale 1.2
 
 
 ################################################################################
@@ -74,10 +75,6 @@ output * bg ~/Pictures/wallpaper/cholitas.jpg fill
 #                                                                              #
 # TODO move all configuration concerning swaylock to .config/swaylock/config   #
 ################################################################################
-
-# Thinkpad X230 requires manual setting of Mute and MicMute LED
-exec $vol_led
-exec $mic_led
 
 # lock screen after 300 seconds of inactivity, then turn off displays after
 # another 300 seconds, and turn screens back on when resumed. It will also lock
@@ -99,13 +96,14 @@ exec $cliphist_watch
 ################################################################################
 
 set $keyboard '1:1:AT_Translated_Set_2_keyboard'
-set $trackpoint '2:10:TPPS/2_IBM_TrackPoint'
-set $touchpad '2:7:SynPS/2_Synaptics_TouchPad'
 
 input $keyboard {
   xkb_layout gb,de
 }
 
+input type:touchpad {
+  natural_scroll enabled
+}
 
 ################################################################################
 #                                     KEYS                                     #
@@ -253,10 +251,9 @@ bindsym $mod+p mode "resize"
 bindsym XF86AudioPlay exec playerctl --player=playerctld play-pause
 bindsym XF86AudioNext exec playerctl --player=playerctld next
 bindsym XF86AudioPrev exec playerctl --player=playerctld previous
-bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle && $vol_led
+bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
 bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
 bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
-bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle && $mic_led
 
 ################################ MISCELLANEOUS ################################# 
 
@@ -271,8 +268,8 @@ bindsym XF86PowerOff exec swaynag -t normal -m 'power options' \
   -z ' 󰋊 hibernate ' 'systemctl hibernate' \
   -z ' 󰍛 suspend ' 'systemctl suspend'
 bindsym XF86Display exec wdisplays
-bindsym XF86MonBrightnessDown exec light -s sysfs/backlight/auto -U 10
-bindsym XF86MonBrightnessUp exec light -s sysfs/backlight/auto -A 10
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
 bindsym Print exec grim -g "$(slurp -d -b '#e4e4e444' -c '#0087ff' -s '#00000000')" - | wl-copy 
 # bindsym XF86WLAN
 # bindsym XF86WebCam
@@ -286,8 +283,8 @@ bindsym Print exec grim -g "$(slurp -d -b '#e4e4e444' -c '#0087ff' -s '#00000000
 
 bar {
   position top
-  font pango: DejaVuSansMono Nerd Font 9
-  status_command while ~/.config/sway/status.sh ; do sleep 1; done
+  font pango: DejaVuSansM Nerd Font 9
+  status_command i3status-rs ~/.config/i3status-rust/config.toml
   status_padding 0
   tray_padding 0
 
