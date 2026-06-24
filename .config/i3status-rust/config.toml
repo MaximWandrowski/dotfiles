@@ -24,6 +24,10 @@ format = " $icon $percentage "
 disconnected_format = " 󰟎 "
 
 [[block]]
+block = "music"
+format = " $icon {$combo.str(max_w:20,rot_interval:0.5) $prev $play $next |}"
+
+[[block]]
 block = "cpu"
 
 [[block]]
