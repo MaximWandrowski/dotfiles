@@ -18,16 +18,6 @@ block = "sound"
 device_kind = "source"
 
 [[block]]
-block = "bluetooth"
-mac = "38:D5:18:A1:58:9D"
-format = " $icon $percentage "
-disconnected_format = " 󰟎 "
-
-[[block]]
-block = "music"
-format = " $icon {$combo.str(max_w:20,rot_interval:0.5) $prev $play $next |}"
-
-[[block]]
 block = "cpu"
 
 [[block]]
@@ -38,6 +28,16 @@ format = " $icon $mem_total_used_percents "
 block = "temperature"
 chip = "coretemp-isa-0000"
 format = " $icon $average "
+
+[[block]]
+block = "bluetooth"
+mac = "38:D5:18:A1:58:9D"
+format = " $icon $percentage "
+disconnected_format = " 󰟎 "
+
+[[block]]
+block = "music"
+format = " $icon {$combo.str(max_w:20,rot_interval:0.5) $prev $play $next |}"
 
 [[block]]
 block = "net"
