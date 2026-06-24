@@ -4,7 +4,7 @@
 
 xwayland enable
 
-font pango: DejaVuSansMono Nerd Font 9
+font pango: DejaVuSansM Nerd Font 9
 
 default_border pixel 1
 default_floating_border none
@@ -18,7 +18,6 @@ smart_borders no_gaps
 
 # gaps will only be enabled if a workspace has more than one child.
 smart_gaps on
-
 
 ################################################################################
 #                                  VARIABLES                                   #
@@ -42,18 +41,8 @@ set $term alacritty
 # set $menu dmenu_path | dmenu | xargs swaymsg exec --
 set $menu wofi -p '' -I --show drun | xargs swaymsg exec --
 
-# Thinkpad X230 requires manual setting of Volume and MicMute LED
-set $vol_led \
-  amixer sget Master | grep -q off && \
-  light -s sysfs/leds/platform::mute -S 100 || \
-  light -s sysfs/leds/platform::mute -S 0
-set $mic_led \
-  amixer sget Capture | grep -q off && \
-  light -s sysfs/leds/platform::micmute -S 100 || \
-  light -s sysfs/leds/platform::micmute -S 0
-
 # Make sure we don't have to retype the locking command
-set $lock_cmd swaylock -f -i ~/Pictures/wallpaper/wallpaper.jpg
+set $lock_cmd 'swaylock -f -i ~/Pictures/wallpaper/wallpaper.jpg'
 
 # clipboard history via cliphist
 set $cliphist_watch wl-paste --watch cliphist store
@@ -79,11 +68,7 @@ output eDP-1 scale 1.2
 # lock screen after 300 seconds of inactivity, then turn off displays after
 # another 300 seconds, and turn screens back on when resumed. It will also lock
 # the screen before computer goes to sleep.
-exec swayidle -w \
-  timeout 900 $lock_cmd \
-  timeout 960 'swaymsg "output * dpms off"' \
-  resume 'swaymsg "output * dpms on"' \
-  before-sleep $lock_cmd
+exec swayidle -w timeout 900 'swaylock -f -i ~/Pictures/wallpaper/wallpaper.jpg' timeout 960 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' before-sleep 'swaylock -f -i ~/Pictures/wallpaper/wallpaper.jpg'
 
 # Run cliphist
 exec $cliphist_watch
@@ -118,7 +103,7 @@ bindsym $mod+Return exec $term
 bindsym $mod+Shift+c kill
 
 # Start your launcher
-bindsym $mod+r exec $menu
+bindsym $mod+Space exec $menu
 
 # Toggle swaybar
 bindsym $mod+t bar mode toggle
@@ -207,10 +192,10 @@ bindsym $mod+e layout toggle split
 bindsym $mod+f fullscreen
 
 # Toggle the current focus between tiling and floating mode
-bindsym $mod+Shift+space floating toggle
+bindsym $mod+Shift+Space floating toggle
 
 # Swap focus between the tiling area and the floating area
-bindsym $mod+space focus mode_toggle
+#bindsym $mod+space focus mode_toggle
 
 # Move focus to the parent container
 bindsym $mod+a focus parent
@@ -244,22 +229,20 @@ mode "resize" {
   bindsym Escape mode "default"
 }
 
-bindsym $mod+p mode "resize"
+bindsym $mod+r mode "resize"
 
 #################################### MEDIA #####################################
 
 bindsym XF86AudioPlay exec playerctl --player=playerctld play-pause
 bindsym XF86AudioNext exec playerctl --player=playerctld next
 bindsym XF86AudioPrev exec playerctl --player=playerctld previous
-bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
-bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
-bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+bindsym XF86AudioRaiseVolume exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
 
 ################################ MISCELLANEOUS ################################# 
 
-bindsym XF86Launch1 exec swaymsg 'input $keyboard xkb_switch_layout next'
-#bindsym XF86ScreenSaver exec $lock_cmd
-bindcode 160 exec $lock_cmd
+bindsym XF86AudioMedia exec swaymsg 'input $keyboard xkb_switch_layout next'
+bindsym Shift+Alt+l exec $lock_cmd
 bindsym XF86Sleep exec systemctl suspend
 bindsym XF86PowerOff exec swaynag -t normal -m 'power options' \
   -z ' 󰐥 poweroff ' 'systemctl poweroff' \
@@ -267,13 +250,10 @@ bindsym XF86PowerOff exec swaynag -t normal -m 'power options' \
   -z ' 󰍛 󰋊 hybrid ' 'systemctl hybrid-sleep' \
   -z ' 󰋊 hibernate ' 'systemctl hibernate' \
   -z ' 󰍛 suspend ' 'systemctl suspend'
-bindsym XF86Display exec wdisplays
+bindsym $mod+p exec wdisplays # framework 13 firmware sends Super_L+p instead of XF86Display :(
 bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
 bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
 bindsym Print exec grim -g "$(slurp -d -b '#e4e4e444' -c '#0087ff' -s '#00000000')" - | wl-copy 
-# bindsym XF86WLAN
-# bindsym XF86WebCam
-
 
 ################################################################################
 #                                  STATUS BAR                                  #
