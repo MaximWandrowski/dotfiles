@@ -42,7 +42,7 @@ format = " $icon $average "
 [[block]]
 block = "net"
 format = " $icon {$signal_strength $ssid} "
-format_alt = " $icon {$ip $graph_down $graph_up} "
+format_alt = " $icon {$ip $graph_down󰜮󰜷$graph_up} "
 
 [[block]]
 block = "keyboard_layout"
