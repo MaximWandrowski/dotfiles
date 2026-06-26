@@ -49,7 +49,7 @@ format = "{ $prev $play $next |}"
 
 [[block]]
 block = "net"
-format = " $icon {$signal_strength $ssid|$ip} "
+format = " $icon {$signal_strength $ssid|$device} "
 format_alt = " $icon {$ip 󰜮$graph_down 󰜷$graph_up} "
 
 [[block]]
