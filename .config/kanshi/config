@@ -1,0 +1,59 @@
+# kanshi — display profiles
+#
+# Outputs are matched by "make model serial" rather than connector name, so a
+# display keeps its settings when it lands on a different DP port.
+#
+# NB: kanshi's rotation direction is the inverse of sway's, so `transform 90`
+# here produces what `swaymsg -t get_outputs` reports as transform 270.
+
+# ---- Output defaults -------------------------------------------------------
+# These apply to every profile that mentions the output. Only `position`, which
+# genuinely differs between profiles, is left to the profiles themselves.
+
+output "Dell Inc. DELL U2724D 7JHJ484" {
+	alias $portrait
+	mode 2560x1440@59.951Hz
+	scale 1
+	transform 90
+	position 0,0
+}
+
+output "Dell Inc. DELL U2724DE BQFT484" {
+	alias $desk
+	mode 2560x1440@59.951Hz
+	scale 1
+	transform normal
+}
+
+output eDP-1 {
+	alias $laptop
+	mode 2256x1504@59.999Hz
+	scale 1.3
+	transform normal
+}
+
+# ---- Profiles --------------------------------------------------------------
+# First profile whose outputs are all connected wins, so order matters:
+# most specific first.
+
+# Portrait U2724D on the left, U2724DE top right, laptop panel below it.
+profile docked-dual {
+	output $portrait enable
+	output $desk enable position 1440,0
+	output $laptop enable position 1440,1440
+}
+
+profile docked-dual-lid-closed {
+	output $portrait enable
+	output $desk enable position 1440,0
+	output $laptop disable
+}
+
+profile desk-only {
+	output $desk enable position 0,0
+	output $laptop enable position 0,1440
+}
+
+profile laptop {
+	output $laptop enable position 0,0
+}
