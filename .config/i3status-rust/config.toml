@@ -38,7 +38,7 @@ disconnected_format = ""
 
 [[block]]
 block = "bluetooth"
-mac = "B4:EE:25:E6:70:A6"
+mac = "B4:EE:25:E7:76:A6"
 format = " $icon {$percentage |}"
 #disconnected_format = " 󰍾 "
 disconnected_format = ""
