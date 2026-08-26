@@ -44,6 +44,9 @@ format = " $icon {$percentage |}"
 disconnected_format = ""
 
 [[block]]
+block = "pomodoro"
+
+[[block]]
 block = "music"
 format = "{ $prev $play $next |}"
 
