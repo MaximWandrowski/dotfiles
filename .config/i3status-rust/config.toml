@@ -49,8 +49,9 @@ format = "{ $prev $play $next |}"
 
 [[block]]
 block = "net"
-format = " $icon {$signal_strength $ssid|$device} "
+format = " $icon {$signal_strength $ssid @$frequency|$device} "
 format_alt = " $icon {$ip 󰜮$graph_down 󰜷$graph_up} "
+interval = 1
 
 [[block]]
 block = "keyboard_layout"
