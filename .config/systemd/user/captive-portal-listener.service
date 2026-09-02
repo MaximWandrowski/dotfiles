@@ -1,0 +1,11 @@
+[Unit]
+Description=Captive portal watcher
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+ExecStart=%h/.local/bin/captive-portal-listener.py
+Restart=on-failure
+
+[Install]
+WantedBy=graphical-session.target
