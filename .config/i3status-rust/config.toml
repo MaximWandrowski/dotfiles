@@ -10,6 +10,10 @@ block = "battery"
 [[block]]
 block = "backlight"
 
+[[block.click]]
+button = "left"
+cmd = "darkman toggle"
+
 [[block]]
 block = "sound"
 
