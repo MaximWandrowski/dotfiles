@@ -1,0 +1,80 @@
+# swaylock configuration
+#
+# Mirrors ~/.config/mako/config: dark, semi-transparent panel with a thin
+# grey border for the idle state, and the Selenized black palette
+# (same as ~/.config/alacritty/theme.toml) for the different states,
+# using the same colour per meaning as the mako urgency levels:
+#   normal/typing -> br_blue   verifying -> blue   wrong -> red (critical)
+#   cleared       -> cyan (low)   caps lock -> yellow   backspace -> orange
+#
+# swaylock colours are RRGGBB[AA] without a leading '#'.
+#
+# ---------------------------------------------------------------------------
+# Selenized black palette reference
+#   bg_0    #181818    bg_1    #252525    bg_2    #3b3b3b
+#   dim_0   #777777    fg_0    #b9b9b9    fg_1    #dedede
+#   red     #ed4a46    green   #70b433    yellow  #dbb32d
+#   blue    #368aeb    magenta #eb6eb7    cyan    #3fc5b7
+#   orange  #e67f43    violet  #a580e2
+#   br_red  #ff5e56    br_green #83c746   br_blue #4f9cfe
+# ---------------------------------------------------------------------------
+
+# === General ================================================================
+daemonize
+image=~/Pictures/wallpaper/wallpaper.jpg
+scaling=fill
+color=181818
+ignore-empty-password
+show-failed-attempts
+indicator-caps-lock
+
+font=DejaVuSansM Nerd Font Mono
+font-size=18
+
+# === Indicator geometry =====================================================
+# mako uses a 1px border; the ring is the only "border" swaylock draws and it
+# also shows the key-press highlights, so keep it thin but still visible.
+indicator-radius=80
+indicator-thickness=4
+
+# No extra outlines around the ring -> a single clean border like mako.
+line-color=00000000
+line-clear-color=00000000
+line-caps-lock-color=00000000
+line-ver-color=00000000
+line-wrong-color=00000000
+separator-color=00000000
+
+# === Idle / typing (mako default: #121212e6 bg, #4e4e4e border) =============
+inside-color=121212e6
+ring-color=4e4e4e
+text-color=8a8a8a
+key-hl-color=4f9cfe
+bs-hl-color=e67f43
+
+# === Cleared (mako urgency=low: cyan) =======================================
+inside-clear-color=181818e6
+ring-clear-color=3fc5b7
+text-clear-color=777777
+
+# === Verifying (blue) =======================================================
+inside-ver-color=181818e6
+ring-ver-color=368aeb
+text-ver-color=b9b9b9
+
+# === Wrong password (mako urgency=critical: red) ============================
+inside-wrong-color=252525f2
+ring-wrong-color=ed4a46
+text-wrong-color=dedede
+
+# === Caps lock (yellow) =====================================================
+inside-caps-lock-color=121212e6
+ring-caps-lock-color=dbb32d
+text-caps-lock-color=dbb32d
+caps-lock-key-hl-color=4f9cfe
+caps-lock-bs-hl-color=e67f43
+
+# === Keyboard layout box (looks like a mako notification) ===================
+layout-bg-color=121212e6
+layout-border-color=4e4e4e
+layout-text-color=8a8a8a
